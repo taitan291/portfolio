@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# configure-pages等がまだNode24未対応のため強制指定
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Node24対応済み
+      - uses: actions/checkout@v6
+
+      # flake.nixのdevShellをCI環境に展開
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Format
+        run: nix fmt -- --ci
+
+      - name: Clippy (WASM)
+        run: nix develop --command cargo clippy --locked --target wasm32-unknown-unknown -- -D warnings
+
+      - name: Build with Trunk
+        run: nix develop --command trunk build --release --locked --public-url "/portfolio/"
+
+      # 存在しないURLでもアプリの404ページを表示する
+      - name: Copy index.html to 404.html
+        run: cp dist/index.html dist/404.html
+
+      # 以下3つはNode24未対応（警告は出るが動作する）
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
