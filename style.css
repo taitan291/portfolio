@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  @apply min-h-screen bg-cyber-page text-cyber-text antialiased leading-relaxed;
+  color-scheme: light;
+  overflow-wrap: anywhere;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid #525252;
+  outline-offset: 3px;
+}
+
+@layer components {
+  /* Use the available viewport, including iPad split view and display cutouts. */
+  .page-shell {
+    padding-left: calc(clamp(1rem, 4vw, 2.5rem) + env(safe-area-inset-left, 0px));
+    padding-right: calc(clamp(1rem, 4vw, 2.5rem) + env(safe-area-inset-right, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+
+  @media (min-width: 40rem) {
+    .skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  @media (min-width: 64rem) {
+    .skills-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    }
+  }
+
+  .responsive-dialog {
+    --dialog-top: max(1rem, env(safe-area-inset-top, 0px));
+    --dialog-right: max(1rem, env(safe-area-inset-right, 0px));
+    --dialog-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    --dialog-left: max(1rem, env(safe-area-inset-left, 0px));
+    inset: var(--dialog-top) var(--dialog-right) var(--dialog-bottom) var(--dialog-left);
+    margin: auto;
+    width: calc(100% - var(--dialog-left) - var(--dialog-right));
+    /* Keep a fallback for browsers without dynamic viewport units. */
+    max-height: calc(100vh - var(--dialog-top) - var(--dialog-bottom));
+    max-height: calc(100dvh - var(--dialog-top) - var(--dialog-bottom));
+    overscroll-behavior: contain;
+  }
+
+  .markdown-content > * + * { margin-top: 1rem; }
+  .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    @apply text-xl font-bold;
+  }
+  .markdown-content ul { @apply list-disc pl-6; }
+  .markdown-content ol { @apply list-decimal pl-6; }
+  .markdown-content a { @apply text-cyber-accent underline; }
+  .markdown-content pre { @apply overflow-x-auto rounded bg-cyber-container p-3; }
+  .markdown-content table { @apply block overflow-x-auto; }
+  .markdown-content th, .markdown-content td { @apply border border-cyber-border p-2; }
+}
