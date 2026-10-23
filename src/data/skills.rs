@@ -38,6 +38,12 @@ pub const SKILLS: &[Skill] = &[
         credit: "Python および Python のロゴは、Python Software Foundation の商標または登録商標です。本サイトは PSF とは無関係です。",
     },
     Skill {
+        name: "Arduino",
+        image_url: "assets/arduino_icon.svg",
+        skills: &[(Stack::Application, Proficiency::Beginner, 30)],
+        credit: "Arduino および Arduino のロゴは、Arduino SA の商標または登録商標です。本サイトは Arduino 公式とは無関係です。",
+    },
+    Skill {
         name: "Git",
         image_url: "assets/git_icon.svg",
         skills: &[(Stack::Infrastructure, Proficiency::Intermediate, 65)],
