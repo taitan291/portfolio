@@ -2,6 +2,8 @@
 name = "githubio"
 version = "0.1.0"
 edition = "2021"
+authors = ["taitan291"]
+license = "GPL-3.0-or-later"
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
