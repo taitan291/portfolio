@@ -1,27 +1,10 @@
+use crate::data::types::Lang;
+
 /// Attached image shown inside the modal.
 #[derive(Clone, PartialEq, Debug)]
 pub struct Seting {
     pub url: &'static str,
     pub alt: &'static str,
-}
-
-#[derive(Clone, Copy, PartialEq, Debug)]
-pub enum Lang {
-    Rust,
-    Python,
-    Astro,
-    Svelte,
-}
-
-impl Lang {
-    pub fn label(&self) -> &'static str {
-        match self {
-            Lang::Rust => "Rust",
-            Lang::Python => "Python",
-            Lang::Astro => "Astro",
-            Lang::Svelte => "Svelte",
-        }
-    }
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
