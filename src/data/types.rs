@@ -82,3 +82,22 @@ impl ChangeLabel for Stack {
         }
     }
 }
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Lang {
+    Rust,
+    Python,
+    Astro,
+    Svelte,
+}
+
+impl Lang {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Lang::Rust => "Rust",
+            Lang::Python => "Python",
+            Lang::Astro => "Astro",
+            Lang::Svelte => "Svelte",
+        }
+    }
+}
