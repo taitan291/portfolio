@@ -9,6 +9,8 @@ pub struct Seting {
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Work {
+    /// Anchor id; same as the work's directory name under `content/`.
+    pub id: &'static str,
     pub header_image_url: &'static str,
     pub header_text: &'static str,
     pub images: &'static [Seting],
@@ -20,6 +22,7 @@ pub struct Work {
 
 pub const WORKS: &[Work] = &[
     Work {
+        id: "programming-1_4",
         header_image_url: "content/programming-1_4/screenshot-2.png",
         header_text: "colab課題4",
         images: &[
@@ -46,6 +49,7 @@ pub const WORKS: &[Work] = &[
         url: Some("https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk"),
     },
     Work {
+        id: "fes-2026",
         header_image_url: "assets/my_icon.avif",
         header_text: "26年度高専祭展示",
         images: &[],

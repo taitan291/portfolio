@@ -5,5 +5,6 @@ pub mod item;
 pub mod modal;
 pub mod skills_card;
 pub mod toc;
+pub mod work_thumb;
 pub mod works_card;
 pub mod zoom_image;

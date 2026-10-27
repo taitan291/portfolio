@@ -1,10 +1,25 @@
 use leptos::{html::Dialog, prelude::*};
 
+/// Lets content inside a `Modal` close its dialog (e.g. before jumping to an in-page anchor).
+#[derive(Clone, Copy)]
+pub struct ModalHandle(NodeRef<Dialog>);
+
+impl ModalHandle {
+    pub fn close(&self) {
+        if let Some(dialog) = self.0.get() {
+            dialog.close();
+        }
+    }
+}
+
 /// Native modal dialogs provide Escape handling, focus containment and focus restoration.
 #[component]
 pub fn Modal(
     #[prop(into)] title: String,
     #[prop(into)] trigger: ViewFn,
+    /// Anchor id on the trigger button, so in-page links can jump to it.
+    #[prop(optional, into)]
+    id: String,
     /// Full URL shown under the title in the header; the scheme is stripped when displayed.
     #[prop(optional)]
     url: &'static str,
@@ -12,12 +27,14 @@ pub fn Modal(
 ) -> impl IntoView {
     let dialog = NodeRef::<Dialog>::new();
     let accessible_title = title.clone();
+    provide_context(ModalHandle(dialog));
 
     view! {
         <button
             type="button"
             aria-haspopup="dialog"
-            class="min-w-0 w-full rounded-xl border border-cyber-border bg-white p-4 sm:p-5 text-center transition-colors hover:border-neutral-400 hover:bg-cyber-container"
+            id=(!id.is_empty()).then_some(id)
+            class="scroll-mt-6 min-w-0 w-full rounded-xl border border-cyber-border bg-white p-4 sm:p-5 text-center transition-colors hover:border-neutral-400 hover:bg-cyber-container"
             on:click=move |_| {
                 if let Some(dialog) = dialog.get() {
                     let _ = dialog.show_modal();

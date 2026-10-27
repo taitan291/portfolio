@@ -7,6 +7,7 @@ use crate::data::works::Work;
 #[component]
 pub fn WorkCard(work: Work) -> impl IntoView {
     let Work {
+        id,
         header_image_url,
         header_text,
         images,
@@ -18,6 +19,7 @@ pub fn WorkCard(work: Work) -> impl IntoView {
 
     view! {
         <Modal
+            id=id
             title=header_text
             url=url.unwrap_or("")
             trigger=move || view! {
@@ -31,11 +33,13 @@ pub fn WorkCard(work: Work) -> impl IntoView {
                     <span class="shrink-0 rounded border border-cyber-muted/40 px-2 py-1 text-sm text-cyber-muted">
                         {if is_public { "Public" } else { "Private" }}
                     </span>
-                    <ul aria-label="使用言語" class="flex flex-wrap justify-end gap-2">
-                        {languages.iter().map(|lang| view! {
-                            <li class="rounded bg-cyber-container px-2 py-1 text-sm">{lang.label()}</li>
-                        }).collect_view()}
-                    </ul>
+                    {(!languages.is_empty()).then(|| view! {
+                        <ul aria-label="使用言語" class="flex flex-wrap justify-end gap-2">
+                            {languages.iter().map(|lang| view! {
+                                <li class="rounded bg-cyber-container px-2 py-1 text-sm">{lang.label()}</li>
+                            }).collect_view()}
+                        </ul>
+                    })}
                 </div>
             }
         >

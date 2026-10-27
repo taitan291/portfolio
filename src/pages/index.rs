@@ -39,7 +39,7 @@ pub fn IndexPage() -> impl IntoView {
                     <Section title="Skills" tag=SKILLS_ID>
                         <div class="skills-grid grid gap-3 lg:gap-4">
                             {SKILLS.iter().map(|skill| view! {
-                                <SkillsCard name=skill.name image_url=skill.image_url skills=skill.skills.to_vec() credit=skill.credit />
+                                <SkillsCard name=skill.name image_url=skill.image_url skills=skill.skills.to_vec() credit=skill.credit lang=skill.lang />
                             }).collect_view()}
                         </div>
                     </Section>

@@ -1,7 +1,9 @@
 use leptos::prelude::*;
 
 use super::modal::Modal;
-use crate::data::types::{ChangeLabel, Proficiency, Stack};
+use super::work_thumb::WorkThumb;
+use crate::data::types::{ChangeLabel, Lang, Proficiency, Stack};
+use crate::data::works::WORKS;
 
 #[component]
 pub fn SkillsCard(
@@ -9,6 +11,7 @@ pub fn SkillsCard(
     #[prop(into)] image_url: String,
     skills: Vec<(Stack, Proficiency, u8)>,
     #[prop(into)] credit: String,
+    lang: Option<Lang>,
 ) -> impl IntoView {
     let dominant = Stack::dominant(&skills);
     let trigger_name = name.clone();
@@ -47,7 +50,34 @@ pub fn SkillsCard(
                     }).collect_view()}
                 </div>
             </div>
-            <p class="mt-6 border-t border-cyber-border pt-3 text-xs text-cyber-muted">{credit}</p>
+            <RelatedWorks lang=lang />
+            <p class="mt-3 border-t border-cyber-border pt-3 text-xs text-cyber-muted">{credit}</p>
         </Modal>
     }
+}
+
+/// Lists the works using this skill's language (nothing when there are none).
+#[component]
+fn RelatedWorks(lang: Option<Lang>) -> impl IntoView {
+    let related: Vec<_> = lang
+        .into_iter()
+        .flat_map(|lang| {
+            WORKS
+                .iter()
+                .filter(move |work| work.languages.contains(&lang))
+        })
+        .collect();
+
+    (!related.is_empty()).then(|| {
+        view! {
+            <section class="mt-6">
+                <h3 class="mb-3 text-sm font-medium text-cyber-muted">"関連作品"</h3>
+                <ul class="grid gap-3 sm:grid-cols-2">
+                    {related.into_iter().map(|work| view! {
+                        <li><WorkThumb work=*work /></li>
+                    }).collect_view()}
+                </ul>
+            </section>
+        }
+    })
 }
