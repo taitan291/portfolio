@@ -4,4 +4,4 @@ public_url = "/portfolio/"
 
 [serve]
 port = 8080
-open = true
+open = false
