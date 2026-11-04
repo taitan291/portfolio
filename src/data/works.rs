@@ -51,7 +51,7 @@ pub const WORKS: &[Work] = &[
         images: &[],
         languages: &[Lang::Svelte],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/fes-2026.html")),
-        is_public: false,
-        url: None,
+        is_public: true,
+        url: Some("https://github.com/u0021u004Du0053/omuct-navi"),
     },
 ];
