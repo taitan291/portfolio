@@ -13,13 +13,13 @@ pub fn WorkCard(work: Work) -> impl IntoView {
         languages,
         description_html,
         is_public,
-        url,
+        urls,
     } = work;
 
     view! {
         <Modal
             title=header_text
-            url=url.unwrap_or("")
+            urls=urls
             trigger=move || view! {
                 <span class="relative block overflow-hidden rounded-lg">
                     <img src=header_image_url alt="" class="h-52 w-full object-cover" />

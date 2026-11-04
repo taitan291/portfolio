@@ -5,9 +5,9 @@ use leptos::{html::Dialog, prelude::*};
 pub fn Modal(
     #[prop(into)] title: String,
     #[prop(into)] trigger: ViewFn,
-    /// Full URL shown under the title in the header; the scheme is stripped when displayed.
+    /// `(題名, url)` pairs shown under the title as `題名:url`; the scheme is stripped when displayed.
     #[prop(optional)]
-    url: &'static str,
+    urls: &'static [(&'static str, &'static str)],
     children: Children,
 ) -> impl IntoView {
     let dialog = NodeRef::<Dialog>::new();
@@ -47,22 +47,25 @@ pub fn Modal(
             <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-cyber-border bg-white p-4">
                 <div class="min-w-0">
                     <h2 class="break-words text-2xl font-bold text-cyber-accent">{title}</h2>
-                    {(!url.is_empty()).then(|| {
+                    {urls.iter().map(|&(label, url)| {
                         let display = url
                             .strip_prefix("https://")
                             .or_else(|| url.strip_prefix("http://"))
                             .unwrap_or(url);
                         view! {
-                            <a
-                                href=url
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="mt-1 block break-all text-sm text-blue-600 underline"
-                            >
-                                {display}
-                            </a>
+                            <p class="mt-1 break-all text-sm">
+                                {label}":"
+                                <a
+                                    href=url
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 underline"
+                                >
+                                    {display}
+                                </a>
+                            </p>
                         }
-                    })}
+                    }).collect_view()}
                 </div>
                 <button
                     type="button"
