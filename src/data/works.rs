@@ -15,7 +15,8 @@ pub struct Work {
     pub languages: &'static [Lang],
     pub description_html: &'static str,
     pub is_public: bool,
-    pub url: Option<&'static str>,
+    /// `(題名, url)` pairs shown under the modal title.
+    pub urls: &'static [(&'static str, &'static str)],
 }
 
 pub const WORKS: &[Work] = &[
@@ -43,15 +44,24 @@ pub const WORKS: &[Work] = &[
         languages: &[Lang::Python],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/programming-1_4.html")),
         is_public: true,
-        url: Some("https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk"),
+        urls: &[(
+            "課題",
+            "https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk",
+        )],
     },
     Work {
-        header_image_url: "assets/my_icon.avif",
+        header_image_url: "content/fes-2026/screenshot-1.jpg",
         header_text: "26年度高専祭展示",
-        images: &[],
+        images: &[Seting {
+            url: "content/fes-2026/screenshot-1.jpg",
+            alt: "colab課題4 スクリーンショット2",
+        }],
         languages: &[Lang::Svelte],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/fes-2026.html")),
         is_public: true,
-        url: Some("https://github.com/u0021u004Du0053/omuct-navi"),
+        urls: &[
+            ("公開url", "https://omuct-navi.ms-fe4.workers.dev"),
+            ("gitHub", "https://github.com/u0021u004Du0053/omuct-navi"),
+        ],
     },
 ];
