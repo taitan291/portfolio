@@ -112,6 +112,21 @@ body:has(dialog[open]) {
     }
   }
 
+  /* Skill bars grow from 0 to --level each time the dialog is shown. */
+  @keyframes skill-bar-grow {
+    from { width: 0; }
+    to { width: var(--level); }
+  }
+
+  .skill-bar {
+    width: var(--level);
+    animation: skill-bar-grow 700ms cubic-bezier(0.2, 0, 0, 1) 150ms both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skill-bar { animation: none; }
+  }
+
   .markdown-content > * + * { margin-top: 1rem; }
   .markdown-content h1, .markdown-content h2, .markdown-content h3 {
     @apply text-xl font-bold;
