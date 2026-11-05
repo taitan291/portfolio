@@ -5,6 +5,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Reserve scrollbar space so opening a modal (body overflow:hidden) doesn't shift the layout. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -57,6 +59,57 @@ body:has(dialog[open]) {
     max-height: calc(100vh - var(--dialog-top) - var(--dialog-bottom));
     max-height: calc(100dvh - var(--dialog-top) - var(--dialog-bottom));
     overscroll-behavior: contain;
+  }
+
+  /* Card-to-dialog expansion: the dialog is revealed through a clip-path that
+     starts at the clicked card's rect (--from-*, set from Rust) and grows to
+     the full dialog. Content is never scaled, so text stays undistorted. */
+  @keyframes dialog-reveal {
+    from {
+      opacity: 0;
+      clip-path: inset(var(--from-top) var(--from-right) var(--from-bottom) var(--from-left) round 0.75rem);
+    }
+    30% { opacity: 1; }
+    to {
+      opacity: 1;
+      /* Negative inset leaves room for the shadow until the animation ends. */
+      clip-path: inset(-3rem round 1rem);
+    }
+  }
+
+  @keyframes backdrop-reveal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* "close" plays the same keyframes in reverse and holds the last frame
+     until Rust calls dialog.close() on animationend. */
+  .responsive-dialog[data-anim],
+  .responsive-dialog[data-anim]::backdrop {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    animation-fill-mode: both;
+  }
+
+  .responsive-dialog[data-anim="open"] { animation-name: dialog-reveal; }
+  .responsive-dialog[data-anim="open"]::backdrop { animation-name: backdrop-reveal; }
+  .responsive-dialog[data-anim="close"] {
+    animation-name: dialog-reveal;
+    animation-direction: reverse;
+    animation-duration: 240ms;
+  }
+  .responsive-dialog[data-anim="close"]::backdrop {
+    animation-name: backdrop-reveal;
+    animation-direction: reverse;
+    animation-duration: 240ms;
+  }
+
+  /* Keep animationend firing (it triggers close) but make it instant. */
+  @media (prefers-reduced-motion: reduce) {
+    .responsive-dialog[data-anim],
+    .responsive-dialog[data-anim]::backdrop {
+      animation-duration: 0.01ms !important;
+    }
   }
 
   .markdown-content > * + * { margin-top: 1rem; }
