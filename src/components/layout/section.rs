@@ -9,9 +9,9 @@ pub fn Section(
     view! {
         <section
             id=tag
-            class="border-t border-cyber-border py-8 text-cyber-text sm:py-10 scroll-mt-6"
+            class="border-t border-site-border py-8 text-site-text sm:py-10 scroll-mt-6"
         >
-            <h2 class="mb-5 text-xl font-semibold tracking-tight text-cyber-accent">{title}</h2>
+            <h2 class="mb-5 text-xl font-semibold tracking-tight text-site-accent">{title}</h2>
             <div>{children()}</div>
         </section>
     }

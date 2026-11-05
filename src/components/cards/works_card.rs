@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 
-use super::modal::Modal;
-use super::zoom_image::ZoomImage;
+use crate::components::ui::modal::Modal;
+use crate::components::ui::zoom_image::ZoomImage;
 use crate::data::works::Work;
 
 #[component]
@@ -28,12 +28,12 @@ pub fn WorkCard(work: Work) -> impl IntoView {
                     </span>
                 </span>
                 <div class="mt-3 flex items-start justify-between gap-2">
-                    <span class="shrink-0 rounded border border-cyber-muted/40 px-2 py-1 text-sm text-cyber-muted">
+                    <span class="shrink-0 rounded border border-site-muted/40 px-2 py-1 text-sm text-site-muted">
                         {if is_public { "Public" } else { "Private" }}
                     </span>
                     <ul aria-label="使用言語" class="flex flex-wrap justify-end gap-2">
                         {languages.iter().map(|lang| view! {
-                            <li class="rounded bg-cyber-container px-2 py-1 text-sm">{lang.label()}</li>
+                            <li class="rounded bg-site-subtle px-2 py-1 text-sm">{lang.label()}</li>
                         }).collect_view()}
                     </ul>
                 </div>
