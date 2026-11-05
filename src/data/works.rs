@@ -45,7 +45,7 @@ pub const WORKS: &[Work] = &[
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/programming-1_4.html")),
         is_public: true,
         urls: &[(
-            "課題",
+            "colab",
             "https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk",
         )],
     },

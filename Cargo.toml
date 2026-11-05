@@ -12,7 +12,7 @@ console_error_panic_hook = "0.1.7"
 leptos = { version = "0.8", features = ["csr"] }
 leptos_router = "0.8"
 
-web-sys = { version = "0.3", features = ["HtmlDialogElement", "DomRect"] }
+web-sys = { version = "0.3", features = ["HtmlDialogElement", "HtmlElement", "Element", "CssStyleDeclaration", "DomRect"] }
 
 [build-dependencies]
 pulldown-cmark = "0.12"
