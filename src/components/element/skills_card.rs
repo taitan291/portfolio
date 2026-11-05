@@ -40,7 +40,7 @@ pub fn SkillsCard(
                                     <span class=format!("text-sm {}", stack.text_class())>{label}</span>
                                 </div>
                                 <div class="h-2 overflow-hidden rounded-full bg-cyber-container" aria-hidden="true">
-                                    <div style=format!("--level:{level}%") class=format!("skill-bar h-full rounded-full {}", stack.bar_class()) />
+                                    <div style=format!("--level:{level}%;background-color:{}", stack.bar_color(level)) class="skill-bar h-full rounded-full" />
                                 </div>
                             </div>
                         }

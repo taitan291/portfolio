@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-const neutralStack = {
-  bg: "#F5F5F5",
-  text: "#525252",
-  bar: "#525252",
-  border: "#E5E5E5",
+// bar は熟練度 100 の色。実際のバー色は熟練度に応じて Rust 側で OKLCH から生成する。
+const stackColors = {
+  frontend: { bg: "#EEF6FE", text: "#255079", bar: "#579DE2", border: "#C4DAF2" },
+  backend: { bg: "#EBF8F8", text: "#005959", bar: "#00AEAE", border: "#BAE0E0" },
+  infra: { bg: "#FDF3EC", text: "#703F19", bar: "#D38246", border: "#EDD1BF" },
+  app: { bg: "#FEF1F4", text: "#733747", bar: "#D8758E", border: "#F0CDD4" },
 };
 
 module.exports = {
@@ -22,12 +23,7 @@ module.exports = {
           accent: "#171717",
           border: "#E5E5E5",
         },
-        stack: {
-          frontend: { ...neutralStack },
-          backend: { ...neutralStack },
-          app: { ...neutralStack },
-          infra: { ...neutralStack },
-        },
+        stack: stackColors,
       },
     },
   },
