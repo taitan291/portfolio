@@ -50,7 +50,7 @@ pub fn Modal(
             node_ref=card
             type="button"
             aria-haspopup="dialog"
-            class="min-w-0 w-full rounded-xl border border-cyber-border bg-white p-4 sm:p-5 text-center transition-colors hover:border-neutral-400 hover:bg-cyber-container hover:-translate-y-[5px]"
+            class="min-w-0 w-full rounded-xl border border-site-border bg-site-surface p-4 sm:p-5 text-center transition-colors hover:border-site-border-strong hover:bg-site-subtle hover:-translate-y-[5px]"
             on:click=move |_| {
                 if let (Some(dialog), Some(card)) = (dialog.get(), card.get()) {
                     let _ = dialog.show_modal();
@@ -65,7 +65,7 @@ pub fn Modal(
         <dialog
             node_ref=dialog
             aria-label=accessible_title
-            class="responsive-dialog max-w-3xl overflow-y-auto rounded-2xl bg-white p-0 text-cyber-text shadow-xl backdrop:bg-black/20 backdrop:backdrop-blur-sm"
+            class="responsive-dialog max-w-3xl overflow-y-auto rounded-2xl bg-site-surface p-0 text-site-text shadow-xl backdrop:bg-black/20 backdrop:backdrop-blur-sm"
             on:cancel=move |event: web_sys::Event| {
                 event.prevent_default();
                 request_close();
@@ -96,9 +96,9 @@ pub fn Modal(
                 }
             }
         >
-            <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-cyber-border bg-white p-4">
+            <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-site-border bg-site-surface p-4">
                 <div class="min-w-0">
-                    <h2 class="break-words text-2xl font-bold text-cyber-accent">{title}</h2>
+                    <h2 class="break-words text-2xl font-bold text-site-accent">{title}</h2>
                     {urls.iter().map(|&(label, url)| {
                         let display = url
                             .strip_prefix("https://")
@@ -111,7 +111,7 @@ pub fn Modal(
                                     href=url
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="text-blue-600 underline"
+                                    class="text-site-link underline"
                                 >
                                     {display}
                                 </a>
@@ -123,7 +123,7 @@ pub fn Modal(
                     type="button"
                     autofocus
                     aria-label="閉じる"
-                    class="min-h-11 min-w-11 shrink-0 rounded px-3 py-2 text-xl transition-colors hover:bg-cyber-container"
+                    class="min-h-11 min-w-11 shrink-0 rounded px-3 py-2 text-xl transition-colors hover:bg-site-subtle"
                     on:click=move |_| request_close()
                 >"✕"</button>
             </div>

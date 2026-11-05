@@ -2,7 +2,7 @@ use crate::data::types::Lang;
 
 /// Attached image shown inside the modal.
 #[derive(Clone, PartialEq, Debug)]
-pub struct Seting {
+pub struct WorkImage {
     pub url: &'static str,
     pub alt: &'static str,
 }
@@ -11,7 +11,7 @@ pub struct Seting {
 pub struct Work {
     pub header_image_url: &'static str,
     pub header_text: &'static str,
-    pub images: &'static [Seting],
+    pub images: &'static [WorkImage],
     pub languages: &'static [Lang],
     pub description_html: &'static str,
     pub is_public: bool,
@@ -24,19 +24,19 @@ pub const WORKS: &[Work] = &[
         header_image_url: "content/programming-1_4/screenshot-2.png",
         header_text: "colab課題4",
         images: &[
-            Seting {
+            WorkImage {
                 url: "content/programming-1_4/screenshot-1.png",
                 alt: "colab課題4 スクリーンショット1",
             },
-            Seting {
+            WorkImage {
                 url: "content/programming-1_4/screenshot-2.png",
                 alt: "colab課題4 スクリーンショット2",
             },
-            Seting {
+            WorkImage {
                 url: "content/programming-1_4/screenshot-3.png",
                 alt: "colab課題4 スクリーンショット3",
             },
-            Seting {
+            WorkImage {
                 url: "content/programming-1_4/screenshot-4.png",
                 alt: "colab課題4 スクリーンショット4",
             },
@@ -52,9 +52,9 @@ pub const WORKS: &[Work] = &[
     Work {
         header_image_url: "content/fes-2026/screenshot-1.jpg",
         header_text: "26年度高専祭展示",
-        images: &[Seting {
+        images: &[WorkImage {
             url: "content/fes-2026/screenshot-1.jpg",
-            alt: "colab課題4 スクリーンショット2",
+            alt: "26年度高専祭展示 スクリーンショット1",
         }],
         languages: &[Lang::Svelte],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/fes-2026.html")),

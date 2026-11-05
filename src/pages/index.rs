@@ -1,24 +1,24 @@
 use leptos::prelude::*;
 
-use crate::components::element::header::{ABOUT_ID, PAGE_LINKS, SKILLS_ID, WORKS_ID};
-use crate::components::element::skills_card::SkillsCard;
-use crate::components::element::toc::Toc;
-use crate::components::element::works_card::WorkCard;
+use crate::components::cards::skills_card::SkillsCard;
+use crate::components::cards::works_card::WorkCard;
+use crate::components::layout::page_layout::PageLayout;
 use crate::components::layout::section::Section;
+use crate::components::layout::toc::Toc;
+use crate::data::site::{ABOUT_ID, PAGE_LINKS, SKILLS_ID, WORKS_ID};
 use crate::data::skills::SKILLS;
 use crate::data::works::WORKS;
-use crate::layouts::layout::Layout;
 
 #[component]
 pub fn IndexPage() -> impl IntoView {
     view! {
-        <Layout>
+        <PageLayout>
             <div class="py-12 sm:py-16">
                 <div class="flex items-stretch gap-4">
                     // <img src="assets/my_icon.avif" alt="taitanのアイコン" class="aspect-square self-stretch rounded-xl object-cover" />
                     <div>
-                        <h1 class="text-4xl font-bold tracking-tight text-cyber-accent sm:text-5xl">"taitan"</h1>
-                        <p class="mt-4 text-cyber-muted">"高専2年 情報系所属"</p>
+                        <h1 class="text-4xl font-bold tracking-tight text-site-accent sm:text-5xl">"taitan"</h1>
+                        <p class="mt-4 text-site-muted">"高専2年 情報系所属"</p>
                     </div>
                 </div>
             </div>
@@ -50,6 +50,6 @@ pub fn IndexPage() -> impl IntoView {
                     </Section>
                 </div>
             </div>
-        </Layout>
+        </PageLayout>
     }
 }

@@ -1,7 +1,8 @@
 use leptos::prelude::*;
 
-use super::modal::Modal;
-use crate::data::types::{ChangeLabel, Proficiency, Stack};
+use super::stack_style::StackStyle;
+use crate::components::ui::modal::Modal;
+use crate::data::types::{Label, Proficiency, Stack};
 
 #[component]
 pub fn SkillsCard(
@@ -39,7 +40,7 @@ pub fn SkillsCard(
                                     </span>
                                     <span class=format!("text-sm {}", stack.text_class())>{label}</span>
                                 </div>
-                                <div class="h-2 overflow-hidden rounded-full bg-cyber-container" aria-hidden="true">
+                                <div class="h-2 overflow-hidden rounded-full bg-site-subtle" aria-hidden="true">
                                     <div style=format!("--level:{level}%;background-color:{}", stack.bar_color(level)) class="skill-bar h-full rounded-full" />
                                 </div>
                             </div>
@@ -47,7 +48,7 @@ pub fn SkillsCard(
                     }).collect_view()}
                 </div>
             </div>
-            <p class="mt-6 border-t border-cyber-border pt-3 text-xs text-cyber-muted">{credit}</p>
+            <p class="mt-6 border-t border-site-border pt-3 text-xs text-site-muted">{credit}</p>
         </Modal>
     }
 }

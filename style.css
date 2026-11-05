@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  @apply min-h-screen bg-cyber-page text-cyber-text antialiased leading-relaxed;
+  @apply min-h-screen bg-site-page text-site-text antialiased leading-relaxed;
   color-scheme: light;
   overflow-wrap: anywhere;
 }
@@ -20,7 +20,7 @@ body:has(dialog[open]) {
 }
 
 :focus-visible {
-  outline: 2px solid #525252;
+  outline: 2px solid theme("colors.site.focus");
   outline-offset: 3px;
 }
 
@@ -133,8 +133,8 @@ body:has(dialog[open]) {
   }
   .markdown-content ul { @apply list-disc pl-6; }
   .markdown-content ol { @apply list-decimal pl-6; }
-  .markdown-content a { @apply text-cyber-accent underline; }
-  .markdown-content pre { @apply overflow-x-auto rounded bg-cyber-container p-3; }
+  .markdown-content a { @apply text-site-accent underline; }
+  .markdown-content pre { @apply overflow-x-auto rounded bg-site-subtle p-3; }
   .markdown-content table { @apply block overflow-x-auto; }
-  .markdown-content th, .markdown-content td { @apply border border-cyber-border p-2; }
+  .markdown-content th, .markdown-content td { @apply border border-site-border p-2; }
 }
