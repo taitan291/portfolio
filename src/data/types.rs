@@ -21,7 +21,7 @@ impl Label for Proficiency {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Stack {
     Frontend,
     Backend,

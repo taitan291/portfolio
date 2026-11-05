@@ -1,12 +1,11 @@
 use leptos::prelude::*;
 
-use crate::components::cards::skills_card::SkillsCard;
 use crate::components::cards::works_card::WorkCard;
 use crate::components::layout::page_layout::PageLayout;
 use crate::components::layout::section::Section;
 use crate::components::layout::toc::Toc;
-use crate::data::site::{ABOUT_ID, PAGE_LINKS, SKILLS_ID, WORKS_ID};
-use crate::data::skills::SKILLS;
+use crate::components::skills_view::SkillsView;
+use crate::data::site::{ABOUT_ID, PAGE_LINKS, WORKS_ID};
 use crate::data::works::WORKS;
 
 #[component]
@@ -36,13 +35,7 @@ pub fn IndexPage() -> impl IntoView {
                     <Section title="About Me" tag=ABOUT_ID>
                         <p>"高専2年 情報系所属のtaitanです。"<br/>"現在はwebフロントエンドやRustなどの勉強中です。"</p>
                     </Section>
-                    <Section title="Skills" tag=SKILLS_ID>
-                        <div class="skills-grid grid gap-3 lg:gap-4">
-                            {SKILLS.iter().map(|skill| view! {
-                                <SkillsCard name=skill.name image_url=skill.image_url skills=skill.skills.to_vec() credit=skill.credit />
-                            }).collect_view()}
-                        </div>
-                    </Section>
+                    <SkillsView />
                     <Section title="Works" tag=WORKS_ID>
                         <div class="grid gap-3 sm:grid-cols-2">
                             {WORKS.iter().map(|work| view! { <WorkCard work=*work /> }).collect_view()}
