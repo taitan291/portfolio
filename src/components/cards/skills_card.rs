@@ -10,8 +10,11 @@ pub fn SkillsCard(
     #[prop(into)] image_url: String,
     skills: Vec<(Stack, Proficiency, u8)>,
     #[prop(into)] credit: String,
+    /// カードの色に使うスタック。省略時は先頭スタック。
+    #[prop(optional)]
+    color_stack: Option<Stack>,
 ) -> impl IntoView {
-    let dominant = Stack::dominant(&skills);
+    let dominant = color_stack.unwrap_or_else(|| Stack::dominant(&skills));
     let trigger_name = name.clone();
     let trigger_image = image_url.clone();
 
