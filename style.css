@@ -127,6 +127,22 @@ body:has(dialog[open]) {
     .skill-bar { animation: none; }
   }
 
+  /* Enlarged image: fit the visible viewport (dvh follows mobile browser toolbars), keeping vh as a fallback. */
+  .zoom-dialog, .zoom-dialog-image {
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100vh - 1rem);
+    max-width: calc(100dvw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+
+  /* Hide the scrollbar of the slideshow track; navigation is via swipe, buttons and dots. */
+  .slideshow-track { scrollbar-width: none; }
+  .slideshow-track::-webkit-scrollbar { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slideshow-track { scroll-behavior: auto; }
+  }
+
   .markdown-content > * + * { margin-top: 1rem; }
   .markdown-content h1, .markdown-content h2, .markdown-content h3 {
     @apply text-xl font-bold;

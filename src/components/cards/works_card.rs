@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 
 use crate::components::ui::modal::Modal;
-use crate::components::ui::zoom_image::ZoomImage;
+use crate::components::ui::slideshow::Slideshow;
 use crate::data::works::Work;
 
 #[component]
@@ -40,13 +40,7 @@ pub fn WorkCard(work: Work) -> impl IntoView {
             }
         >
             <div class="markdown-content min-w-0 break-words" inner_html=description_html />
-            {(!images.is_empty()).then(|| view! {
-                <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                    {images.iter().map(|image| view! {
-                        <ZoomImage src=image.url alt=image.alt />
-                    }).collect_view()}
-                </div>
-            })}
+            {(!images.is_empty()).then(|| view! { <Slideshow images=images /> })}
         </Modal>
     }
 }

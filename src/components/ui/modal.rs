@@ -50,7 +50,7 @@ pub fn Modal(
             node_ref=card
             type="button"
             aria-haspopup="dialog"
-            class="min-w-0 w-full rounded-xl border border-site-border bg-site-surface p-4 sm:p-5 text-center transition-colors hover:border-site-border-strong hover:bg-site-subtle hover:-translate-y-[5px]"
+            class="min-w-0 w-full rounded-xl border border-site-border bg-site-surface p-4 sm:p-5 text-center transition-colors hover:border-site-border-strong hover:bg-site-subtle [@media(hover:hover)]:hover:-translate-y-[5px]"
             on:click=move |_| {
                 if let (Some(dialog), Some(card)) = (dialog.get(), card.get()) {
                     let _ = dialog.show_modal();

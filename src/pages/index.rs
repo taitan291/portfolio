@@ -24,7 +24,7 @@ pub fn IndexPage() -> impl IntoView {
             <div class="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10 xl:gap-16">
                 <div class="lg:sticky lg:top-6 lg:self-start">
                     <Section title="Table of contents" tag="contents">
-                        <nav aria-label="目次" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                        <nav aria-label="目次" class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                             {PAGE_LINKS.into_iter().map(|(label, id)| view! {
                                 <Toc title=label tag=format!("#{id}") />
                             }).collect_view()}
