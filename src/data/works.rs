@@ -52,10 +52,24 @@ pub const WORKS: &[Work] = &[
     Work {
         header_image_url: "content/fes-2026/screenshot-1.jpg",
         header_text: "26年度高専祭展示",
-        images: &[WorkImage {
-            url: "content/fes-2026/screenshot-1.jpg",
-            alt: "26年度高専祭展示 スクリーンショット1",
-        }],
+        images: &[
+            WorkImage {
+                url: "content/fes-2026/screenshot-1.jpg",
+                alt: "26年度高専祭展示 スクリーンショット1",
+            },
+            WorkImage {
+                url: "content/fes-2026/screenshot-2.png",
+                alt: "26年度高専祭展示 スクリーンショット2",
+            },
+            WorkImage {
+                url: "content/fes-2026/screenshot-3.png",
+                alt: "26年度高専祭展示 スクリーンショット3",
+            },
+            WorkImage {
+                url: "content/fes-2026/screenshot-4.png",
+                alt: "26年度高専祭展示 スクリーンショット4",
+            },
+        ],
         languages: &[Lang::Svelte],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/fes-2026.html")),
         is_public: true,
