@@ -1,8 +1,6 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
 
-/// `/` に置くイースターエッグ。Apache の初期ページ風の見た目で、
-/// 「index.php なのに中身は Rust」という小ネタを仕込んでいる。
 #[component]
 pub fn RootPage() -> impl IntoView {
     let (revealed, set_revealed) = signal(false);
@@ -34,8 +32,8 @@ pub fn RootPage() -> impl IntoView {
                         " のトップです。探しているのはたぶんこちら:"
                     </p>
                     <p class="mt-2">
-                        <A href="/index.php" attr:class="text-site-link underline underline-offset-4">
-                            "/index.php"
+                        <A href="https://taitan291.github.io/portfolio/index.php" attr:class="text-site-link underline underline-offset-4">
+                            "こちら"
                         </A>
                     </p>
                 </div>
@@ -52,10 +50,6 @@ index.php: not PHP script, it's actually Rust (compiled to WASM) 🦀
 // ↑ このサイトに PHP は一行もありません。"}
                     </pre>
                 </Show>
-
-                <p class="text-xs text-site-muted">
-                    "Apache/2.4.58 (Rust) Server at taitan291.github.io Port 443"
-                </p>
             </div>
         }
 }
