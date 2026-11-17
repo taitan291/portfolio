@@ -1,6 +1,9 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
 
+use crate::data::site::INDEX_URL;
+
+/// トップ（`/`）。Web サーバーの初期ページ風のネタページで、本編へのリンクを置く。
 #[component]
 pub fn RootPage() -> impl IntoView {
     let (revealed, set_revealed) = signal(false);
@@ -32,7 +35,7 @@ pub fn RootPage() -> impl IntoView {
                         " のトップです。探しているのはたぶん:"
                     </p>
                     <p class="mt-2">
-                        <A href="https://taitan291.github.io/portfolio/index.php" attr:class="text-site-link underline underline-offset-4">
+                        <A href=INDEX_URL attr:class="text-site-link underline underline-offset-4">
                             "こちら"
                         </A>
                     </p>

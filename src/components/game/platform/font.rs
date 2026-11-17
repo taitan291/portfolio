@@ -136,15 +136,18 @@ pub fn draw_text_outlined(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::components::game::engine::config::penalty_label;
     use crate::components::game::engine::sequence::{SEQUENCE, UNRELATED_DECOYS};
 
     #[test]
     fn all_game_glyphs_exist_and_fit() {
+        // 的の文字と、ポップアップ（ペナルティ・セット完了・星）に使う文字。
+        let popups = format!("{} 404! *", penalty_label());
         let chars = SEQUENCE
             .iter()
             .chain(UNRELATED_DECOYS.iter())
             .map(|g| g.as_char())
-            .chain("+2.0 404! *".chars());
+            .chain(popups.chars());
         for ch in chars {
             let b = bitmap(ch).unwrap_or_else(|| panic!("no glyph {ch:?}"));
             assert!(b.iter().all(|row| *row < 32), "{ch:?}");

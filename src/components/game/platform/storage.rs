@@ -2,8 +2,9 @@
 //!
 //! プライベートモードなどで使えない場合は、何もせず空のランキングとして扱う。
 
-use crate::components::game::engine::ranking::Ranking;
 use web_sys::Storage;
+
+use crate::components::game::engine::ranking::Ranking;
 
 const KEY: &str = "portfolio.404-game.ranking.v1";
 

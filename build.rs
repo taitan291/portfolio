@@ -1,7 +1,7 @@
 use pulldown_cmark::{html, Options, Parser};
 use std::{env, fs, path::Path};
 
-/// Renders `src/data/content/*.md` and `src/data/content/*/explanation.md` to HTML in `$OUT_DIR/works/*.html`.
+/// `src/data/content/*.md` と `src/data/content/*/explanation.md` を `$OUT_DIR/works/*.html` に変換する。
 fn main() {
     let src_dir = Path::new("src/data/content");
     let out_dir = Path::new(&env::var("OUT_DIR").unwrap()).join("works");
@@ -10,7 +10,7 @@ fn main() {
 
     for entry in fs::read_dir(src_dir).unwrap() {
         let mut path = entry.unwrap().path();
-        // `<name>/explanation.md` is rendered as `<name>.html`.
+        // `<name>/explanation.md` は `<name>.html` として出力する。
         let dir_name = path.is_dir().then(|| path.file_name().unwrap().to_owned());
         if dir_name.is_some() {
             path = path.join("explanation.md");

@@ -1,22 +1,18 @@
-use crate::data::types::Lang;
+use crate::data::types::{Image, Lang, Link};
 
-/// Attached image shown inside the modal.
-#[derive(Clone, PartialEq, Debug)]
-pub struct WorkImage {
-    pub url: &'static str,
-    pub alt: &'static str,
-}
-
-#[derive(Clone, Copy, PartialEq, Debug)]
+/// 作品一覧の 1 項目。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Work {
     pub header_image_url: &'static str,
     pub header_text: &'static str,
-    pub images: &'static [WorkImage],
+    /// モーダル内のスライドショーに表示する画像。
+    pub images: &'static [Image],
     pub languages: &'static [Lang],
+    /// `build.rs` が Markdown から生成した説明文の HTML。
     pub description_html: &'static str,
     pub is_public: bool,
-    /// `(題名, url)` pairs shown under the modal title.
-    pub urls: &'static [(&'static str, &'static str)],
+    /// モーダルの題名の下に表示するリンク。
+    pub links: &'static [Link],
 }
 
 pub const WORKS: &[Work] = &[
@@ -24,19 +20,19 @@ pub const WORKS: &[Work] = &[
         header_image_url: "content/programming-1_4/screenshot-2.png",
         header_text: "colab課題4",
         images: &[
-            WorkImage {
+            Image {
                 url: "content/programming-1_4/screenshot-1.png",
                 alt: "colab課題4 スクリーンショット1",
             },
-            WorkImage {
+            Image {
                 url: "content/programming-1_4/screenshot-2.png",
                 alt: "colab課題4 スクリーンショット2",
             },
-            WorkImage {
+            Image {
                 url: "content/programming-1_4/screenshot-3.png",
                 alt: "colab課題4 スクリーンショット3",
             },
-            WorkImage {
+            Image {
                 url: "content/programming-1_4/screenshot-4.png",
                 alt: "colab課題4 スクリーンショット4",
             },
@@ -44,28 +40,28 @@ pub const WORKS: &[Work] = &[
         languages: &[Lang::Python],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/programming-1_4.html")),
         is_public: true,
-        urls: &[(
-            "colab",
-            "https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk",
-        )],
+        links: &[Link {
+            label: "colab",
+            url: "https://drive.google.com/file/d/1nTQzwjVNw9vu-YG5YJoKgazwJEpGblWk",
+        }],
     },
     Work {
         header_image_url: "content/fes-2026/screenshot-1.jpg",
         header_text: "26年度高専祭展示",
         images: &[
-            WorkImage {
+            Image {
                 url: "content/fes-2026/screenshot-1.jpg",
                 alt: "26年度高専祭展示 スクリーンショット1",
             },
-            WorkImage {
+            Image {
                 url: "content/fes-2026/screenshot-2.png",
                 alt: "26年度高専祭展示 スクリーンショット2",
             },
-            WorkImage {
+            Image {
                 url: "content/fes-2026/screenshot-3.png",
                 alt: "26年度高専祭展示 スクリーンショット3",
             },
-            WorkImage {
+            Image {
                 url: "content/fes-2026/screenshot-4.png",
                 alt: "26年度高専祭展示 スクリーンショット4",
             },
@@ -73,9 +69,15 @@ pub const WORKS: &[Work] = &[
         languages: &[Lang::Svelte],
         description_html: include_str!(concat!(env!("OUT_DIR"), "/works/fes-2026.html")),
         is_public: true,
-        urls: &[
-            ("公開url", "https://omuct-navi.ms-fe4.workers.dev"),
-            ("gitHub", "https://github.com/u0021u004Du0053/omuct-navi"),
+        links: &[
+            Link {
+                label: "公開url",
+                url: "https://omuct-navi.ms-fe4.workers.dev",
+            },
+            Link {
+                label: "gitHub",
+                url: "https://github.com/u0021u004Du0053/omuct-navi",
+            },
         ],
     },
 ];

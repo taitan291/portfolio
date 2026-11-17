@@ -2,10 +2,12 @@ use leptos::prelude::*;
 
 use crate::components::ui::modal::Modal;
 use crate::components::ui::slideshow::Slideshow;
+use crate::data::types::Label;
 use crate::data::works::Work;
 
+/// 作品のカード。クリックで説明文と画像をモーダル表示する。
 #[component]
-pub fn WorkCard(work: Work) -> impl IntoView {
+pub fn WorkCard(work: &'static Work) -> impl IntoView {
     let Work {
         header_image_url,
         header_text,
@@ -13,13 +15,13 @@ pub fn WorkCard(work: Work) -> impl IntoView {
         languages,
         description_html,
         is_public,
-        urls,
-    } = work;
+        links,
+    } = *work;
 
     view! {
         <Modal
             title=header_text
-            urls=urls
+            links=links
             trigger=move || view! {
                 <span class="relative block overflow-hidden rounded-lg">
                     <img src=header_image_url alt="" class="h-52 w-full object-cover" />

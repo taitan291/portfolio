@@ -3,7 +3,11 @@
 //! `AudioContext` はユーザー操作（START）を起点に作る。作れなかった場合は無音で続行する。
 
 use wasm_bindgen::JsValue;
-use web_sys::{AudioBuffer, AudioContext, AudioNode, BiquadFilterType, OscillatorType};
+use web_sys::{
+    AudioBuffer, AudioContext, AudioContextState, AudioNode, BiquadFilterType, OscillatorType,
+};
+
+use crate::components::game::engine::rng::Rng;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Sfx {
@@ -42,7 +46,7 @@ impl Audio {
             self.noise = self.ctx.as_ref().and_then(|c| make_noise(c).ok());
         }
         if let Some(ctx) = &self.ctx {
-            if ctx.state() == web_sys::AudioContextState::Suspended {
+            if ctx.state() == AudioContextState::Suspended {
                 let _ = ctx.resume();
             }
         }
@@ -159,7 +163,7 @@ fn make_noise(ctx: &AudioContext) -> Result<AudioBuffer, JsValue> {
     let rate = ctx.sample_rate();
     let len = (rate * 0.1) as u32;
     let buf = ctx.create_buffer(1, len, rate)?;
-    let mut rng = crate::components::game::engine::rng::Rng::new(0x5EED);
+    let mut rng = Rng::new(0x5EED);
     let data: Vec<f32> = (0..len)
         .map(|_| (rng.next_f64() * 2.0 - 1.0) as f32)
         .collect();

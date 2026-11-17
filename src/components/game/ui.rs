@@ -1,15 +1,31 @@
 //! DOM オーバーレイ（Title / Countdown / HUD / Paused / Result）。設計書 12 章。
+//!
+//! 色は `tailwind.config.js` の `game.*` を使う（Canvas 側の `platform::palette` と同じ値）。
+
+use leptos::html::Button;
+use leptos::prelude::*;
+use wasm_bindgen::JsValue;
 
 use super::component::{clear_ranking, GameHandle, UiSignals};
-use super::engine::config::{PENALTY_SEC, SHOW_NEXT_GLYPH};
+use super::engine::config::{penalty_label, SHOW_NEXT_GLYPH};
 use super::engine::ranking::RANKING_LEN;
-use super::engine::sequence::SEQUENCE;
+use super::engine::sequence::{parts, NOTFOUND_START, SEQUENCE};
 use super::engine::state::{CountLabel, Phase};
-use leptos::prelude::*;
 
+/// メニューのボタン（主・副の色は `BTN_PRIMARY` / `BTN_SECONDARY` を足す）。
 const BTN_BASE: &str = "pointer-events-auto inline-flex min-h-12 items-center justify-center border-2 border-black px-6 py-2 text-lg font-bold tracking-widest shadow-[4px_4px_0_0_#000] transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]";
-const BTN_PRIMARY: &str = "bg-[#d8344c] text-white hover:bg-[#e8506a]";
-const BTN_SECONDARY: &str = "bg-[#fbf1da] text-[#0b0d1a] hover:bg-white";
+const BTN_PRIMARY: &str = "bg-game-red text-white hover:bg-game-red-hover";
+const BTN_SECONDARY: &str = "bg-game-cream text-game-black hover:bg-white";
+/// HUD の正方形アイコンボタン（一時停止・ミュート）。
+const ICON_BTN: &str = "pointer-events-auto flex h-10 w-10 items-center justify-center border-2 border-white/70 bg-black/40 hover:bg-black/70 disabled:opacity-40";
+/// 説明やランキングを載せる枠。
+const PANEL: &str = "w-full max-w-sm border-2 border-white/30 bg-black/40 sm:max-w-md";
+/// 全画面メニュー（Title / Paused / Result）の中身を中央に縦並びにする。
+const SCREEN_BODY: &str =
+    "flex min-h-full flex-col items-center justify-center px-4 py-8 text-center";
+/// 全画面メニューの大見出し（サイズは画面ごとに足す）。
+const SCREEN_TITLE: &str =
+    "font-bold tracking-widest text-game-yellow drop-shadow-[3px_3px_0_theme(colors.game.red)]";
 
 /// ミュート切替ボタン。
 #[component]
@@ -17,7 +33,7 @@ fn MuteButton(ui: UiSignals, handle: GameHandle) -> impl IntoView {
     view! {
         <button
             type="button"
-            class="pointer-events-auto flex h-10 w-10 items-center justify-center border-2 border-white/70 bg-black/40 hover:bg-black/70"
+            class=ICON_BTN
             aria-label=move || if ui.muted.get() { "音を出す" } else { "ミュートする" }
             aria-pressed=move || ui.muted.get().to_string()
             on:click=move |_| handle.toggle_mute()
@@ -45,7 +61,7 @@ fn PauseButton(ui: UiSignals, handle: GameHandle) -> impl IntoView {
     view! {
         <button
             type="button"
-            class="pointer-events-auto flex h-10 w-10 items-center justify-center border-2 border-white/70 bg-black/40 hover:bg-black/70 disabled:opacity-40"
+            class=ICON_BTN
             aria-label="一時停止メニューを開く (Esc)"
             title="一時停止 (Esc)"
             disabled=disabled
@@ -61,16 +77,15 @@ fn PauseButton(ui: UiSignals, handle: GameHandle) -> impl IntoView {
 /// 進捗表示。撃った文字は塗り、次の文字は点滅枠。`404` を撃ち終えた直後のセットは光らせる。
 #[component]
 fn ProgressBar(ui: UiSignals) -> impl IntoView {
-    const GROUPS: [(usize, usize); 4] = [(0, 3), (3, 6), (6, 9), (9, 17)];
     move || {
         let progress = ui.progress.get();
         let portrait = ui.portrait.get();
-        let group = |(start, end): (usize, usize)| {
-            let flash = progress == end && end <= 9;
+        let part = |(start, end): (usize, usize)| {
+            let flash = progress == end && end <= NOTFOUND_START;
             let boxes = (start..end)
                 .map(|i| {
                     let state = if i < progress {
-                        "border-[#f5d45e] bg-[#f5d45e] text-[#0b0d1a]"
+                        "border-game-yellow bg-game-yellow text-game-black"
                     } else if i == progress {
                         "animate-pulse border-white bg-white/15 text-white"
                     } else {
@@ -84,15 +99,20 @@ fn ProgressBar(ui: UiSignals) -> impl IntoView {
                 })
                 .collect_view();
             view! {
-                <span class=if flash { "game-flash flex gap-0.5 rounded-sm" } else { "flex gap-0.5 rounded-sm" }>
+                <span class="flex gap-0.5 rounded-sm" class:game-flash=flash>
                     {boxes}
                 </span>
             }
         };
+        // `404` の各セットは 1 行にまとめ、`NOTFOUND` は縦向きのとき次の行に回す。
+        let (sets, notfound): (Vec<_>, Vec<_>) =
+            parts().partition(|&(start, _)| start < NOTFOUND_START);
         view! {
             <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 drop-shadow-[2px_2px_0_#000]" aria-hidden="true">
-                <span class="flex gap-2 sm:gap-3">{group(GROUPS[0])} {group(GROUPS[1])} {group(GROUPS[2])}</span>
-                <span class=if portrait { "flex basis-full justify-center" } else { "flex" }>{group(GROUPS[3])}</span>
+                <span class="flex gap-2 sm:gap-3">{sets.into_iter().map(part).collect_view()}</span>
+                <span class=if portrait { "flex basis-full justify-center" } else { "flex" }>
+                    {notfound.into_iter().map(part).collect_view()}
+                </span>
             </div>
         }
     }
@@ -123,8 +143,8 @@ pub fn Hud(ui: UiSignals, handle: GameHandle) -> impl IntoView {
                             // 誤射のたびに作り直して、アニメーションを再生する。
                             let n = ui.penalty.get();
                             (n > 0).then(|| view! {
-                                <span class="game-rise text-base text-[#ff5a6e] sm:text-xl">
-                                    {format!("+{PENALTY_SEC:.1}")}
+                                <span class="game-rise text-base text-game-penalty sm:text-xl">
+                                    {penalty_label()}
                                 </span>
                             })
                         }}
@@ -148,7 +168,7 @@ pub fn Hud(ui: UiSignals, handle: GameHandle) -> impl IntoView {
 
 /// UNIX ミリ秒を `YYYY/MM/DD`（ローカル時刻）にする。
 fn format_date(ms: f64) -> String {
-    let d = js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(ms));
+    let d = js_sys::Date::new(&JsValue::from_f64(ms));
     format!(
         "{}/{:02}/{:02}",
         d.get_full_year(),
@@ -174,14 +194,14 @@ fn RankingTable(
             .map(|i| {
                 let rec = records.get(i).copied();
                 let row_class = if highlight == Some(i) {
-                    "game-flash bg-[#f5d45e] text-[#0b0d1a]"
+                    "game-flash bg-game-yellow text-game-black"
                 } else if rec.is_some() {
                     ""
                 } else {
                     "text-white/35"
                 };
                 let rank_class = if i == 0 && highlight != Some(0) {
-                    "text-[#f5d45e]"
+                    "text-game-yellow"
                 } else {
                     ""
                 };
@@ -221,10 +241,10 @@ fn RankingTable(
     };
     view! {
         <section
-            class="w-full max-w-sm border-2 border-white/30 bg-black/40 px-3 py-3 text-left text-sm sm:max-w-md sm:text-base"
+            class=format!("{PANEL} px-3 py-3 text-left text-sm sm:text-base")
             aria-labelledby="game-ranking-title"
         >
-            <h2 id="game-ranking-title" class="mb-2 text-center font-bold tracking-widest text-[#f5d45e]">
+            <h2 id="game-ranking-title" class="mb-2 text-center font-bold tracking-widest text-game-yellow">
                 "YOUR BEST 5"
             </h2>
             <ol class="flex flex-col gap-0.5">{rows}</ol>
@@ -235,7 +255,7 @@ fn RankingTable(
                         <div class="mt-2 text-center">
                             <button
                                 type="button"
-                                class="pointer-events-auto text-sm text-white/60 underline underline-offset-4 hover:text-[#ff7a8a]"
+                                class="pointer-events-auto text-sm text-white/60 underline underline-offset-4 hover:text-game-red-light"
                                 on:click=reset
                             >
                                 "記録をリセット"
@@ -250,29 +270,31 @@ fn RankingTable(
         </section>
     }
 }
+
+/// スタート画面（遊び方・ランキング・START）。背景では的のデモが動く。
 #[component]
 fn TitleScreen(ui: UiSignals, handle: GameHandle, home_href: String) -> impl IntoView {
     view! {
-        <div class="pointer-events-auto absolute inset-0 overflow-y-auto bg-[#0b0d1a]/70">
+        <div class="pointer-events-auto absolute inset-0 overflow-y-auto bg-game-black/70">
             <div class="absolute right-3 top-3">
                 <MuteButton ui=ui handle=handle />
             </div>
-            <div class="flex min-h-full flex-col items-center justify-center gap-4 px-4 py-8 text-center sm:gap-6">
-                <h1 class="text-4xl font-bold tracking-widest text-[#f5d45e] drop-shadow-[3px_3px_0_#d8344c] sm:text-7xl">
+            <div class=format!("{SCREEN_BODY} gap-4 sm:gap-6")>
+                <h1 class=format!("{SCREEN_TITLE} text-4xl sm:text-7xl")>
                     "404 NOT FOUND"
                 </h1>
                 <p class="text-base sm:text-lg">
                     "ページが見つかりません。代わりに 4・0・4… を撃ち抜け！"
                 </p>
                 <div class="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-stretch sm:gap-4">
-                    <ul class="w-full max-w-sm space-y-1 border-2 border-white/30 bg-black/40 px-4 py-3 text-left text-sm leading-relaxed sm:max-w-md sm:text-base">
+                    <ul class=format!("{PANEL} space-y-1 px-4 py-3 text-left text-sm leading-relaxed sm:text-base")>
                         <li>"▶ 「4 0 4」を 3 回 → 「N O T F O U N D」の順に撃て"</li>
-                        <li>{format!("▶ 違う的を撃つと +{PENALTY_SEC:.1} 秒")}</li>
+                        <li>{format!("▶ 違う的を撃つと {} 秒", penalty_label())}</li>
                         <li>
                             "▶ "
-                            <span class="text-[#ff7a8a]">"0（ゼロ）は斜線入り・赤い的"</span>
+                            <span class="text-game-red-light">"0（ゼロ）は斜線入り・赤い的"</span>
                             "、"
-                            <span class="text-[#8fb4ff]">"O（オー）は丸・青い的"</span>
+                            <span class="text-game-blue-light">"O（オー）は丸・青い的"</span>
                         </li>
                     </ul>
                     <RankingTable ui=ui resettable=true />
@@ -285,7 +307,7 @@ fn TitleScreen(ui: UiSignals, handle: GameHandle, home_href: String) -> impl Int
                     >
                         "START"
                     </button>
-                    <a href=home_href class="pointer-events-auto text-base underline underline-offset-4 hover:text-[#f5d45e]">
+                    <a href=home_href class="pointer-events-auto text-base underline underline-offset-4 hover:text-game-yellow">
                         "トップへ戻る"
                     </a>
                 </div>
@@ -294,6 +316,7 @@ fn TitleScreen(ui: UiSignals, handle: GameHandle, home_href: String) -> impl Int
     }
 }
 
+/// カウントダウン（3 → 2 → 1 → GO!）の大きな数字。
 #[component]
 fn CountdownView(ui: UiSignals) -> impl IntoView {
     move || {
@@ -305,7 +328,7 @@ fn CountdownView(ui: UiSignals) -> impl IntoView {
             // 数字が変わるたびに要素を作り直し、拡大アニメーションを再生する。
             view! {
                 <div class="pointer-events-none absolute inset-0 flex items-center justify-center" aria-live="assertive">
-                    <span class="game-pop text-7xl font-bold text-[#f5d45e] drop-shadow-[4px_4px_0_#000] sm:text-9xl">
+                    <span class="game-pop text-7xl font-bold text-game-yellow drop-shadow-[4px_4px_0_#000] sm:text-9xl">
                         {text}
                     </span>
                 </div>
@@ -317,7 +340,7 @@ fn CountdownView(ui: UiSignals) -> impl IntoView {
 /// 一時停止メニュー（再開・もう一度・ホームに戻る）。
 #[component]
 fn PausedView(handle: GameHandle, home_href: String) -> impl IntoView {
-    let resume_ref = NodeRef::<leptos::html::Button>::new();
+    let resume_ref = NodeRef::<Button>::new();
     // 開いたらすぐキーボード操作できるよう「再開」にフォーカスする。
     Effect::new(move |_| {
         if let Some(b) = resume_ref.get() {
@@ -331,8 +354,8 @@ fn PausedView(handle: GameHandle, home_href: String) -> impl IntoView {
             aria-modal="true"
             aria-labelledby="game-paused-title"
         >
-            <div class="flex min-h-full flex-col items-center justify-center gap-4 px-4 py-8 text-center sm:gap-6">
-                <h2 id="game-paused-title" class="text-4xl font-bold tracking-widest text-[#f5d45e] drop-shadow-[3px_3px_0_#d8344c] sm:text-7xl">
+            <div class=format!("{SCREEN_BODY} gap-4 sm:gap-6")>
+                <h2 id="game-paused-title" class=format!("{SCREEN_TITLE} text-4xl sm:text-7xl")>
                     "PAUSED"
                 </h2>
                 <div class="flex w-full max-w-sm flex-col gap-3">
@@ -361,15 +384,16 @@ fn PausedView(handle: GameHandle, home_href: String) -> impl IntoView {
     }
 }
 
+/// リザルト画面（タイム・順位・ランキング・次の操作）。
 #[component]
 fn ResultView(ui: UiSignals, handle: GameHandle, home_href: String) -> impl IntoView {
     move || {
         let home_href = home_href.clone();
         ui.result.get().map(|r| {
             view! {
-                <div class="pointer-events-auto absolute inset-0 overflow-y-auto bg-[#0b0d1a]/75">
-                    <div class="flex min-h-full flex-col items-center justify-center gap-3 px-4 py-8 text-center sm:gap-5">
-                        <h2 class="game-pop text-6xl font-bold tracking-widest text-[#f5d45e] drop-shadow-[3px_3px_0_#d8344c] sm:text-8xl">
+                <div class="pointer-events-auto absolute inset-0 overflow-y-auto bg-game-black/75">
+                    <div class=format!("{SCREEN_BODY} gap-3 sm:gap-5")>
+                        <h2 class=format!("game-pop {SCREEN_TITLE} text-6xl sm:text-8xl")>
                             "CLEAR!"
                         </h2>
                         <p class="text-4xl font-bold sm:text-6xl">
@@ -390,7 +414,7 @@ fn ResultView(ui: UiSignals, handle: GameHandle, home_href: String) -> impl Into
                                 format!("自己ランキング {} 位", rank + 1)
                             };
                             view! {
-                                <p class="game-flash border-2 border-[#f5d45e] px-3 py-1 text-base font-bold tracking-widest text-[#f5d45e] sm:text-xl">
+                                <p class="game-flash border-2 border-game-yellow px-3 py-1 text-base font-bold tracking-widest text-game-yellow sm:text-xl">
                                     {label}
                                 </p>
                             }

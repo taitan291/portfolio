@@ -1,7 +1,5 @@
 //! 撃つ順番（シーケンス）と、的に書かれる文字。
 
-use super::config::SEQUENCE_LEN;
-
 /// 的に書かれる文字。数字の `0`（`D0`）とアルファベットの `O` は別の値。
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 pub enum Glyph {
@@ -74,6 +72,16 @@ impl Glyph {
 
 use Glyph::*;
 
+/// `404` の 1 セットの長さと、セット数。
+pub const SET_LEN: usize = 3;
+pub const SET_COUNT: usize = 3;
+/// `NOTFOUND` パートの長さ。
+const NOTFOUND_LEN: usize = 8;
+/// `NOT FOUND` パート（`404` × 3 の直後）が始まる位置。
+pub const NOTFOUND_START: usize = SET_LEN * SET_COUNT;
+/// シーケンス長。
+pub const SEQUENCE_LEN: usize = NOTFOUND_START + NOTFOUND_LEN;
+
 /// 撃つ順番: `404` × 3 → `NOTFOUND`。
 pub const SEQUENCE: [Glyph; SEQUENCE_LEN] =
     [D4, D0, D4, D4, D0, D4, D4, D0, D4, N, O, T, F, O, U, N, D];
@@ -82,13 +90,16 @@ pub const SEQ_DECOYS: [Glyph; 8] = [D4, D0, N, O, T, F, U, D];
 /// シーケンスに含まれない、`0/O/4/D` と見分けやすい文字。
 pub const UNRELATED_DECOYS: [Glyph; 10] = [E, H, K, M, R, S, W, X, Y, Z];
 
-/// `404` の 1 セットの長さと、セット数。
-pub const SET_LEN: usize = 3;
-pub const SET_COUNT: usize = 3;
+/// 進捗表示で 1 まとまりにする区間 `start..end`（`404` の各セットと `NOTFOUND`）。
+pub fn parts() -> impl Iterator<Item = (usize, usize)> {
+    (0..SET_COUNT)
+        .map(|i| (i * SET_LEN, (i + 1) * SET_LEN))
+        .chain(std::iter::once((NOTFOUND_START, SEQUENCE_LEN)))
+}
 
 /// 進捗が `progress` になった瞬間に `404` のセットを撃ち終えたなら、そのセット番号（1 始まり）。
 pub fn completed_set(progress: usize) -> Option<u8> {
-    (progress > 0 && progress <= SET_LEN * SET_COUNT && progress.is_multiple_of(SET_LEN))
+    (progress > 0 && progress <= NOTFOUND_START && progress.is_multiple_of(SET_LEN))
         .then_some((progress / SET_LEN) as u8)
 }
 
@@ -121,5 +132,12 @@ mod tests {
         assert_eq!(sets, vec![1, 2, 3]);
         assert_eq!(completed_set(9), Some(3));
         assert_eq!(completed_set(12), None);
+    }
+
+    #[test]
+    fn parts_cover_sequence_in_order() {
+        let parts: Vec<_> = parts().collect();
+        assert_eq!(parts, vec![(0, 3), (3, 6), (6, 9), (9, 17)]);
+        assert_eq!(parts.last().map(|p| p.1), Some(SEQUENCE_LEN));
     }
 }

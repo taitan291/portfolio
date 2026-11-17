@@ -1,9 +1,14 @@
 //! チューニング用の設定値（設計書 18 章）。時間はすべて秒、座標は論理 px。
+//! シーケンスの構造（長さ・パートの区切り）は `sequence` に置く。
 
-/// シーケンス長。
-pub const SEQUENCE_LEN: usize = 17;
 /// 誤射 1 回あたりのペナルティ。
 pub const PENALTY_SEC: f64 = 0.5;
+
+/// 誤射ペナルティの表示（`+0.5` など）。HUD・ポップアップ・説明文で共有する。
+pub fn penalty_label() -> String {
+    format!("+{PENALTY_SEC:.1}")
+}
+
 /// 空振り 1 回あたりのペナルティ。
 pub const MISS_SHOT_PENALTY_SEC: f64 = 0.0;
 
@@ -39,8 +44,6 @@ pub const SEQ_DECOY_RATIO: f64 = 0.75;
 /// 同じスロットに再出現できるまでの時間。
 pub const SLOT_COOLDOWN_SEC: f64 = 0.15;
 
-/// `NOT FOUND` パート（シーケンスの 10 文字目以降）が始まる位置。
-pub const NOTFOUND_START: usize = 9;
 /// `NOT FOUND` パートで同時表示数に足す数（この範囲の乱数）。
 pub const NOTFOUND_EXTRA_MIN: usize = 1;
 pub const NOTFOUND_EXTRA_MAX: usize = 3;

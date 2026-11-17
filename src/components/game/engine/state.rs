@@ -1,14 +1,14 @@
 //! ゲーム全体の状態・フェーズ遷移・タイマー（設計書 4・5・9 章）。
 
 use super::config::{
-    CLEAR_DELAY_SEC, COUNTDOWN_STEP_SEC, GO_SEC, MAX_DT, MISS_SHOT_PENALTY_SEC, PENALTY_SEC,
-    SEQUENCE_LEN, SLOT_COOLDOWN_SEC,
+    penalty_label, CLEAR_DELAY_SEC, COUNTDOWN_STEP_SEC, GO_SEC, MAX_DT, MISS_SHOT_PENALTY_SEC,
+    PENALTY_SEC, SLOT_COOLDOWN_SEC,
 };
 use super::effects::{Effects, ParticleColor, PopupKind};
 use super::hit::pick_target;
 use super::layout::{layout_for, Layout, Orientation};
 use super::rng::Rng;
-use super::sequence::{completed_set, Glyph, SEQUENCE};
+use super::sequence::{completed_set, Glyph, SEQUENCE, SEQUENCE_LEN};
 use super::spawner::SpawnerState;
 use super::target::Target;
 
@@ -321,7 +321,8 @@ impl GameState {
             self.penalty_count += 1;
             self.effects
                 .shards(&mut self.rng, cx, cy, scale, ParticleColor::Gray);
-            self.effects.popup("+2.0", cx, cy - 6.0, PopupKind::Penalty);
+            self.effects
+                .popup(penalty_label(), cx, cy - 6.0, PopupKind::Penalty);
             self.effects.shake();
             return Some(ShotResult::Wrong);
         }
@@ -356,12 +357,15 @@ impl GameState {
 
 #[cfg(test)]
 mod tests {
-    use super::super::config::{
-        RISE_SEC, TARGET_GAP_MAX, TARGET_MIN_UP_SEC, UP_MAX_SEC, UP_MIN_SEC, VISIBLE_LIMIT,
-    };
-    use super::super::target::TargetState;
+    use std::collections::{HashMap, HashSet};
+
     use super::*;
-    use std::collections::HashSet;
+    use crate::components::game::engine::config::{
+        RISE_SEC, TARGET_GAP_MAX, TARGET_MIN_UP_SEC, UP_MAX_SEC, UP_MIN_SEC, VISIBLE_LIMIT,
+        VISIBLE_MAX,
+    };
+    use crate::components::game::engine::sequence::NOTFOUND_START;
+    use crate::components::game::engine::target::TargetState;
 
     const DT: f64 = 1.0 / 60.0;
 
@@ -565,9 +569,9 @@ mod tests {
     fn slot_cooldown_is_respected() {
         let mut g = GameState::new(11, Orientation::Portrait);
         let mut now = start_playing(&mut g);
-        let mut last_gone: std::collections::HashMap<_, f64> = Default::default();
+        let mut last_gone: HashMap<_, f64> = HashMap::new();
         let mut alive: HashSet<u32> = HashSet::new();
-        let mut slot_of: std::collections::HashMap<u32, _> = Default::default();
+        let mut slot_of: HashMap<u32, _> = HashMap::new();
         for _ in 0..5_000 {
             now += DT * 1000.0;
             g.update(now, DT);
@@ -667,12 +671,11 @@ mod tests {
 
     #[test]
     fn notfound_part_shows_more_targets() {
-        use super::super::config::{NOTFOUND_START, VISIBLE_MAX};
         for o in [Orientation::Landscape, Orientation::Portrait] {
             for seed in 1..=10u64 {
                 let mut g = GameState::new(seed, o);
                 let mut now = start_playing(&mut g);
-                let mut run = |g: &mut GameState, now: &mut f64| {
+                let run = |g: &mut GameState, now: &mut f64| {
                     let mut peak = 0;
                     for _ in 0..3_000 {
                         *now += DT * 1000.0;

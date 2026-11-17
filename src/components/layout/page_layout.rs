@@ -1,7 +1,9 @@
-use crate::components::layout::footer::Footer;
-use crate::components::layout::header::Header;
 use leptos::prelude::*;
 
+use crate::components::layout::footer::Footer;
+use crate::components::layout::header::Header;
+
+/// ヘッダー・本文・フッターからなるページの外枠。
 #[component]
 pub fn PageLayout(children: Children) -> impl IntoView {
     view! {

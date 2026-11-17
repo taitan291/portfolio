@@ -1,12 +1,16 @@
-use leptos::{html::Div, prelude::*};
+use leptos::html::Div;
+use leptos::prelude::*;
 
 use crate::components::ui::zoom_image::ZoomImage;
-use crate::data::works::WorkImage;
+use crate::data::types::Image;
 
-/// Swipeable slideshow (CSS scroll-snap) with prev/next buttons, dot indicators and arrow-key support.
-/// Clicking a slide opens the enlarged view via [`ZoomImage`].
+/// 前後のボタンにのせるクラス（位置の `left-2` / `right-2` は個別に付ける）。
+const NAV_BUTTON: &str = "absolute top-1/2 z-10 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-xl text-white transition-colors hover:bg-black/70";
+
+/// スワイプできるスライドショー（CSS scroll-snap）。前後ボタン・ドット・矢印キーで切り替える。
+/// スライドをクリックすると [`ZoomImage`] で拡大表示する。
 #[component]
-pub fn Slideshow(images: &'static [WorkImage]) -> impl IntoView {
+pub fn Slideshow(images: &'static [Image]) -> impl IntoView {
     let track = NodeRef::<Div>::new();
     let current = RwSignal::new(0usize);
     let count = images.len();
@@ -19,8 +23,6 @@ pub fn Slideshow(images: &'static [WorkImage]) -> impl IntoView {
     };
     let prev = move || go_to((current.get_untracked() + count - 1) % count);
     let next = move || go_to((current.get_untracked() + 1) % count);
-
-    let nav_button = "absolute top-1/2 z-10 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-xl text-white transition-colors hover:bg-black/70";
 
     view! {
         <section
@@ -63,13 +65,13 @@ pub fn Slideshow(images: &'static [WorkImage]) -> impl IntoView {
                     <button
                         type="button"
                         aria-label="前の画像"
-                        class=format!("{nav_button} left-2")
+                        class=format!("{NAV_BUTTON} left-2")
                         on:click=move |_| prev()
                     >"‹"</button>
                     <button
                         type="button"
                         aria-label="次の画像"
-                        class=format!("{nav_button} right-2")
+                        class=format!("{NAV_BUTTON} right-2")
                         on:click=move |_| next()
                     >"›"</button>
                 })}

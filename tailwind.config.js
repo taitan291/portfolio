@@ -25,6 +25,19 @@ const siteColors = {
   focus: "#525252", // フォーカスリング
 };
 
+// 404 射的ゲームの DOM オーバーレイの配色 (bg-game-black, text-game-yellow, ...)。
+// Canvas 側のパレット (components/game/platform/palette.rs) と同じ値にそろえる。
+const gameColors = {
+  black: "#0b0d1a", // 背景・ボタン文字 (palette::BLACK)
+  red: "#d8344c", // 主ボタン・見出しの影 (palette::RED)
+  "red-hover": "#e8506a", // 主ボタンのホバー
+  "red-light": "#ff7a8a", // 「0 は赤い的」の説明・リセットのホバー
+  penalty: "#ff5a6e", // HUD の誤射ペナルティ表示
+  "blue-light": "#8fb4ff", // 「O は青い的」の説明
+  yellow: "#f5d45e", // 見出し・進捗・強調 (palette::YELLOW)
+  cream: "#fbf1da", // 副ボタン (palette::CREAM)
+};
+
 module.exports = {
   content: ["*.html", "./src/**/*.rs"],
   theme: {
@@ -32,6 +45,7 @@ module.exports = {
       colors: {
         site: siteColors,
         stack: stackColors,
+        game: gameColors,
       },
     },
   },

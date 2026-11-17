@@ -1,5 +1,10 @@
 //! Canvas 2D の描画（設計書 10 章）。論理解像度で描き、CSS で拡大する。
 
+use std::f64::consts::TAU;
+
+use wasm_bindgen::JsCast;
+use web_sys::{CanvasRenderingContext2d as Ctx, HtmlCanvasElement};
+
 use super::font;
 use super::palette as pal;
 use super::sprites::{Sprites, POST_W};
@@ -8,9 +13,6 @@ use crate::components::game::engine::effects::{ParticleColor, PopupKind, HOLE_SE
 use crate::components::game::engine::layout::{Layout, Row};
 use crate::components::game::engine::state::GameState;
 use crate::components::game::engine::target::{Target, TargetState};
-use std::f64::consts::TAU;
-use wasm_bindgen::JsCast;
-use web_sys::{CanvasRenderingContext2d as Ctx, HtmlCanvasElement};
 
 pub struct Renderer {
     canvas: HtmlCanvasElement,
@@ -213,7 +215,7 @@ fn draw_effects(ctx: &Ctx, state: &GameState) {
             PopupKind::Penalty => (pal::RED, 1.0),
             PopupKind::Good => (pal::YELLOW, 2.0),
         };
-        font::draw_text_outlined(ctx, p.text, p.x, p.y - 10.0 * k, scale, color, pal::BLACK);
+        font::draw_text_outlined(ctx, &p.text, p.x, p.y - 10.0 * k, scale, color, pal::BLACK);
     }
     ctx.set_global_alpha(1.0);
 }

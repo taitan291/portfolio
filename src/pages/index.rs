@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use crate::components::cards::works_card::WorkCard;
+use crate::components::cards::work_card::WorkCard;
 use crate::components::layout::page_layout::PageLayout;
 use crate::components::layout::section::Section;
 use crate::components::layout::toc::Toc;
@@ -8,6 +8,7 @@ use crate::components::skills_view::SkillsView;
 use crate::data::site::{ABOUT_ID, PAGE_LINKS, WORKS_ID};
 use crate::data::works::WORKS;
 
+/// 本編ページ（`/index.php`）。About / Skills / Works を表示する。
 #[component]
 pub fn IndexPage() -> impl IntoView {
     view! {
@@ -23,22 +24,22 @@ pub fn IndexPage() -> impl IntoView {
             </div>
             <div class="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10 xl:gap-16">
                 <div class="lg:sticky lg:top-6 lg:self-start">
-                    <Section title="Table of contents" tag="contents">
+                    <Section title="Table of contents" id="contents">
                         <nav aria-label="目次" class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                             {PAGE_LINKS.into_iter().map(|(label, id)| view! {
-                                <Toc title=label tag=format!("#{id}") />
+                                <Toc title=label href=format!("#{id}") />
                             }).collect_view()}
                         </nav>
                     </Section>
                 </div>
                 <div class="min-w-0">
-                    <Section title="About Me" tag=ABOUT_ID>
+                    <Section title="About Me" id=ABOUT_ID>
                         <p>"高専2年 情報系所属のtaitanです。"<br/>"現在はwebフロントエンドやRustなどの勉強中です。"</p>
                     </Section>
                     <SkillsView />
-                    <Section title="Works" tag=WORKS_ID>
+                    <Section title="Works" id=WORKS_ID>
                         <div class="grid gap-3 sm:grid-cols-2">
-                            {WORKS.iter().map(|work| view! { <WorkCard work=*work /> }).collect_view()}
+                            {WORKS.iter().map(|work| view! { <WorkCard work=work /> }).collect_view()}
                         </div>
                     </Section>
                 </div>

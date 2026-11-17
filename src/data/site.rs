@@ -10,4 +10,10 @@ pub const PAGE_LINKS: [(&str, &str); 3] = [
     ("Works", WORKS_ID),
 ];
 
+/// 本編ページのルーター内パス（`Router base` からの相対）。
+pub const INDEX_PATH: &str = "/index.php";
+
+/// 本編ページの絶対 URL。`/` と 404 から戻るリンクはルーター内パスだとうまく遷移しないため、こちらを使う。
+pub const INDEX_URL: &str = "https://taitan291.github.io/portfolio/index.php";
+
 pub const GITHUB_URL: &str = "https://github.com/taitan291";

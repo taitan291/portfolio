@@ -1,15 +1,16 @@
-use leptos::{
-    html::{Button, Dialog},
-    prelude::*,
-};
-use web_sys::HtmlDialogElement;
+use leptos::html::{Button, Dialog};
+use leptos::prelude::*;
+use web_sys::{Element, HtmlDialogElement, HtmlElement};
 
-/// Feeds the clicked card's rect to the CSS reveal animation as `--from-*` insets
-/// (distance from each edge of the dialog to the matching edge of the card).
-fn set_origin(dialog: &HtmlDialogElement, card: &web_sys::Element) {
+use crate::data::types::Link;
+
+/// クリックしたカードの位置を、CSS の展開アニメーション用に `--from-*` として渡す
+/// （ダイアログの各辺から、カードの対応する辺までの距離）。
+fn set_origin(dialog: &HtmlDialogElement, card: &Element) {
     let d = dialog.get_bounding_client_rect();
     let c = card.get_bounding_client_rect();
-    let style = web_sys::HtmlElement::style(dialog);
+    // `dialog.style()` は Leptos の `ElementExt::style` に隠れるので、明示的に呼ぶ。
+    let style = HtmlElement::style(dialog);
     for (name, value) in [
         ("--from-top", c.top() - d.top()),
         ("--from-right", d.right() - c.right()),
@@ -20,21 +21,29 @@ fn set_origin(dialog: &HtmlDialogElement, card: &web_sys::Element) {
     }
 }
 
-/// Native modal dialogs provide Escape handling, focus containment and focus restoration.
+/// URL からスキームを除いた表示用の文字列。
+fn display_url(url: &str) -> &str {
+    url.strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))
+        .unwrap_or(url)
+}
+
+/// カード型のボタンと、それで開くモーダル。
+/// ネイティブの `<dialog>` を使い、Esc での終了・フォーカスの閉じ込めと復帰はブラウザに任せる。
 #[component]
 pub fn Modal(
     #[prop(into)] title: String,
     #[prop(into)] trigger: ViewFn,
-    /// `(題名, url)` pairs shown under the title as `題名:url`; the scheme is stripped when displayed.
+    /// 題名の下に `題名:URL` の形で表示するリンク。URL のスキームは表示しない。
     #[prop(optional)]
-    urls: &'static [(&'static str, &'static str)],
+    links: &'static [Link],
     children: Children,
 ) -> impl IntoView {
     let dialog = NodeRef::<Dialog>::new();
     let card = NodeRef::<Button>::new();
     let accessible_title = title.clone();
 
-    // Play the reverse animation, then close on `animationend`.
+    // 逆再生のアニメーションを流し、`animationend` で閉じる。
     let request_close = move || {
         if let (Some(dialog), Some(card)) = (dialog.get(), card.get()) {
             if dialog.get_attribute("data-anim").as_deref() == Some("close") {
@@ -54,7 +63,7 @@ pub fn Modal(
             on:click=move |_| {
                 if let (Some(dialog), Some(card)) = (dialog.get(), card.get()) {
                     let _ = dialog.show_modal();
-                    // Measure before data-anim is set so the animation can't skew the rect.
+                    // アニメーションで位置がずれないよう、data-anim を付ける前に測る。
                     set_origin(&dialog, &card);
                     let _ = dialog.set_attribute("data-anim", "open");
                 }
@@ -99,24 +108,18 @@ pub fn Modal(
             <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-site-border bg-site-surface p-4">
                 <div class="min-w-0">
                     <h2 class="break-words text-2xl font-bold text-site-accent">{title}</h2>
-                    {urls.iter().map(|&(label, url)| {
-                        let display = url
-                            .strip_prefix("https://")
-                            .or_else(|| url.strip_prefix("http://"))
-                            .unwrap_or(url);
-                        view! {
-                            <p class="mt-1 break-all text-sm">
-                                {label}":"
-                                <a
-                                    href=url
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="text-site-link underline"
-                                >
-                                    {display}
-                                </a>
-                            </p>
-                        }
+                    {links.iter().map(|link| view! {
+                        <p class="mt-1 break-all text-sm">
+                            {link.label}":"
+                            <a
+                                href=link.url
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-site-link underline"
+                            >
+                                {display_url(link.url)}
+                            </a>
+                        </p>
                     }).collect_view()}
                 </div>
                 <button

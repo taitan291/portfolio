@@ -1,13 +1,21 @@
+//! スキル・作品データで共有する型。
+
+/// 画面に表示する名前を持つ型。
 pub trait Label {
     fn label(&self) -> &'static str;
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+/// 習熟度。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Proficiency {
-    Advanced,     // 上級者
-    Intermediate, // 中級者
-    Learning,     // 学習中
-    Beginner,     // 初心者
+    /// 上級者
+    Advanced,
+    /// 中級者
+    Intermediate,
+    /// 学習中
+    Learning,
+    /// 初心者
+    Beginner,
 }
 
 impl Label for Proficiency {
@@ -21,6 +29,7 @@ impl Label for Proficiency {
     }
 }
 
+/// 技術スタック。
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Stack {
     Frontend,
@@ -30,10 +39,13 @@ pub enum Stack {
 }
 
 impl Stack {
-    /// カード代表色: スタックの種類が複数ある場合、最初のものを採用
-    pub fn dominant(skills: &[(Stack, Proficiency, u8)]) -> Stack {
-        skills.first().map(|(s, _, _)| *s).unwrap_or(Stack::Backend)
-    }
+    /// 全スタック（表示順: FE → BE → APP → Infra）。
+    pub const ALL: [Stack; 4] = [
+        Stack::Frontend,
+        Stack::Backend,
+        Stack::Application,
+        Stack::Infrastructure,
+    ];
 }
 
 impl Label for Stack {
@@ -47,7 +59,8 @@ impl Label for Stack {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+/// 作品で使った言語・フレームワーク。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Lang {
     Rust,
     Python,
@@ -55,8 +68,8 @@ pub enum Lang {
     Svelte,
 }
 
-impl Lang {
-    pub fn label(&self) -> &'static str {
+impl Label for Lang {
+    fn label(&self) -> &'static str {
         match self {
             Lang::Rust => "Rust",
             Lang::Python => "Python",
@@ -64,4 +77,18 @@ impl Lang {
             Lang::Svelte => "Svelte",
         }
     }
+}
+
+/// 画像（URL と代替テキスト）。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Image {
+    pub url: &'static str,
+    pub alt: &'static str,
+}
+
+/// 題名付きのリンク。`題名:URL` の形で表示する。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Link {
+    pub label: &'static str,
+    pub url: &'static str,
 }

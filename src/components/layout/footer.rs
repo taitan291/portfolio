@@ -1,5 +1,6 @@
 use leptos::prelude::*;
 
+/// サイト共通のフッター。
 #[component]
 pub fn Footer() -> impl IntoView {
     view! {

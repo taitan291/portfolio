@@ -1,11 +1,12 @@
-use leptos::{html::Dialog, prelude::*};
+use leptos::html::Dialog;
+use leptos::prelude::*;
 
-/// Thumbnail that opens a larger view of the image in a native modal dialog on click.
+/// クリックするとネイティブの `<dialog>` で拡大表示するサムネイル。
 #[component]
 pub fn ZoomImage(
     #[prop(into)] src: String,
     #[prop(into)] alt: String,
-    /// Extra classes for the thumbnail button (e.g. `h-full` to fill a fixed-size slot).
+    /// サムネイルのボタンに足すクラス（固定サイズの枠を埋める `h-full` など）。
     #[prop(optional, into)]
     class: String,
 ) -> impl IntoView {

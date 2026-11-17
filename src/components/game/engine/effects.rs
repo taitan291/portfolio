@@ -1,8 +1,9 @@
 //! パーティクル・ポップアップ・弾痕・画面揺れ（設計書 11.1）。
 
+use std::f64::consts::TAU;
+
 use super::config::MAX_PARTICLES;
 use super::rng::Rng;
-use std::f64::consts::TAU;
 
 /// パーティクルの色。実際の色はプラットフォーム側のパレットで決める。
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -44,7 +45,7 @@ pub enum PopupKind {
 
 #[derive(Clone, Debug)]
 pub struct Popup {
-    pub text: &'static str,
+    pub text: String,
     pub x: f64,
     pub y: f64,
     pub t: f64,
@@ -157,9 +158,9 @@ impl Effects {
         }
     }
 
-    pub fn popup(&mut self, text: &'static str, x: f64, y: f64, kind: PopupKind) {
+    pub fn popup(&mut self, text: impl Into<String>, x: f64, y: f64, kind: PopupKind) {
         self.popups.push(Popup {
-            text,
+            text: text.into(),
             x,
             y,
             t: 0.0,

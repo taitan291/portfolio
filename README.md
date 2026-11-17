@@ -40,7 +40,7 @@ trunk build --release --locked --public-url "/portfolio/"
 PRとmainへのpushで検証が走り（`.github/workflows/check.yml`）、mainへのpushで `dist/` をデプロイします（`.github/workflows/gh-pages.yml`）。
 デプロイ時に `index.html` を `404.html` にコピーし、未知のURLでもアプリの404ページを表示します。
 
-ベースパス `/portfolio/` を変えるときは、`Trunk.toml` の `public_url`・`src/app.rs` の `Router base`・ワークフローの `--public-url` を揃えてください。
+ベースパス `/portfolio/` を変えるときは、`Trunk.toml` の `public_url`・`src/app.rs` の `Router base`・`src/data/site.rs` の `INDEX_URL`・ワークフローの `--public-url` を揃えてください。
 
 ## ディレクトリ構成
 
@@ -55,8 +55,10 @@ src/
 │   ├── skills_view.rs スキル一覧（並べ替え）
 │   └── game/          404の射的ゲーム（engine: 純Rustのロジック / platform: Canvas・音・入力）
 ├── data/
-│   ├── site.rs        セクションID、ナビゲーション、GitHub URL
+│   ├── site.rs        セクションID、ナビゲーション、本編のURL、GitHub URL
+│   ├── types.rs       共有の型（Stack・Lang・Image・Link など）
 │   ├── skills.rs      スキル一覧（SKILLS）
+│   ├── skill_sort.rs  スキルの並べ替え（表示モード）
 │   ├── works.rs       作品一覧（WORKS）
 │   └── content/<作品名>/  説明（explanation.md）と画像
 └── assets/            アイコン
@@ -64,7 +66,7 @@ src/
 
 ## コンテンツの変更
 
-- スキル: `src/data/skills.rs` の `SKILLS`。ロゴはSimple IconsのURLを指定し、`credit` に商標表記を入れます。
+- スキル: `src/data/skills.rs` の `SKILLS`。ロゴはSimple IconsのURLを指定し、`stacks` にスタックごとの習熟度（`StackLevel::new(スタック, 習熟度, 0〜100)`）、`credit` に商標表記を入れます。
 - 作品:
   1. `src/data/content/<作品名>/explanation.md` と画像を置く
   2. `src/data/works.rs` の `WORKS` に `Work` を追加する。画像は `content/<作品名>/...`、本文は次のように指定します。
@@ -74,7 +76,7 @@ src/
      ```
 
   MarkdownはそのままHTMLとして描画されるため、信頼できる本文だけを置いてください。
-- 配色: `tailwind.config.js`
+- 配色: `tailwind.config.js`（404ゲームのCanvasは `src/components/game/platform/palette.rs` と値を揃える）
 
 ## ライセンス
 

@@ -3,15 +3,17 @@
 //! すべてコードで描き、非表示の `<canvas>` に焼き込んで `drawImage` でスタンプする。
 //! 将来 PNG に差し替える場合も、このキャッシュの中身を入れ替えるだけで済む。
 
+use std::collections::HashMap;
+
+use wasm_bindgen::JsCast;
+use web_sys::{CanvasRenderingContext2d as Ctx, Document, HtmlCanvasElement};
+
 use super::font::{self, GLYPH_H, GLYPH_W};
 use super::palette as pal;
 use crate::components::game::engine::config::PLATE_D;
 use crate::components::game::engine::layout::{Layout, Orientation};
 use crate::components::game::engine::rng::Rng;
 use crate::components::game::engine::sequence::GlyphKind;
-use std::collections::HashMap;
-use wasm_bindgen::JsCast;
-use web_sys::{CanvasRenderingContext2d as Ctx, Document, HtmlCanvasElement};
 
 /// 屋台の柱の幅。棚板もこの内側に描く。
 pub const POST_W: f64 = 8.0;

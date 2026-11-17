@@ -3,6 +3,18 @@
 //! 毎フレーム変わる状態は `Engine` が `RefCell` で持ち、UI に関係する値だけをシグナルで公開する。
 //! rAF ループ・window/document のリスナー・`AudioContext` はアンマウント時に必ず解放する。
 
+use std::cell::{Cell, RefCell};
+use std::rc::Rc;
+
+use leptos::html::{Canvas, Div};
+use leptos::prelude::*;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::{
+    Event, EventTarget, HtmlCanvasElement, HtmlElement, KeyboardEvent, PointerEvent,
+    ResizeObserver, VisibilityState,
+};
+
 use super::engine::config::{HUD_UPDATE_MS, PENALTY_SEC};
 use super::engine::layout::{layout_for, Orientation};
 use super::engine::ranking::{Ranking, Record};
@@ -13,16 +25,6 @@ use super::platform::raf::RafLoop;
 use super::platform::renderer::Renderer;
 use super::platform::storage;
 use super::ui::{Hud, Overlay};
-use leptos::html::{Canvas, Div};
-use leptos::prelude::*;
-use std::cell::{Cell, RefCell};
-use std::rc::Rc;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use web_sys::{
-    Event, EventTarget, HtmlCanvasElement, HtmlElement, KeyboardEvent, PointerEvent,
-    ResizeObserver, VisibilityState,
-};
 
 /// リザルト画面の表示内容。
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -524,7 +526,7 @@ pub fn ShootingGallery(
     view! {
         <div
             node_ref=root_ref
-            class="relative flex h-[100dvh] w-full select-none items-center justify-center overflow-hidden bg-[#0b0d1a] font-mono text-white"
+            class="relative flex h-[100dvh] w-full select-none items-center justify-center overflow-hidden bg-game-black font-mono text-white"
         >
             <div node_ref=stage_ref class="relative h-[180px] w-[320px]">
                 <canvas

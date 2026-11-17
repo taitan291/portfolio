@@ -1,7 +1,8 @@
 //! ポインタ入力の座標変換と連射制限（設計書 8 章）。
 
-use crate::components::game::engine::config::FIRE_COOLDOWN_MS;
 use web_sys::HtmlCanvasElement;
+
+use crate::components::game::engine::config::FIRE_COOLDOWN_MS;
 
 /// クライアント座標を論理座標に変換する。表示サイズの変化に追従するよう毎回計算する。
 pub fn to_logical(

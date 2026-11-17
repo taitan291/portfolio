@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use crate::data::skills::Skill;
-use crate::data::types::{Label, Stack};
+use crate::data::types::Stack;
 
 /// 並べ替えキー
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -28,20 +28,12 @@ pub enum Mode {
 }
 
 /// 全モード共通の状態: 段(スタックのまとまり)のリストと、ソート設定。
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct SortConfig {
     pub groups: Vec<Vec<Stack>>,
     pub key: SortKey,
     pub order: SortOrder,
 }
-
-/// 並び順が固定の全スタック
-pub const ALL_STACKS: [Stack; 4] = [
-    Stack::Frontend,
-    Stack::Backend,
-    Stack::Application,
-    Stack::Infrastructure,
-];
 
 impl SortConfig {
     /// モードとカスタム設定から `SortConfig` を作る。
@@ -62,7 +54,7 @@ impl SortConfig {
             },
             Mode::Custom => Self {
                 // チェック順に関わらず fe/be/ap/if の順で並べる
-                groups: ALL_STACKS
+                groups: Stack::ALL
                     .iter()
                     .filter(|s| custom_stacks.contains(s))
                     .map(|s| vec![*s])
@@ -86,31 +78,21 @@ pub struct Entry {
 
 /// 1段分の表示内容
 pub struct Row {
-    /// 見出し(スタック名を「 / 」で連結)
-    pub heading: String,
-    /// 見出しに色を付けるためのスタック一覧
+    /// 見出しに並べるスタック
     pub stacks: Vec<Stack>,
     pub entries: Vec<Entry>,
-}
-
-fn heading(stacks: &[Stack]) -> String {
-    stacks
-        .iter()
-        .map(|s| s.label())
-        .collect::<Vec<_>>()
-        .join(" / ")
 }
 
 /// スキルをその段のスタックで評価する。該当スタックがなければ `None`。
 fn entry_for(skill: &'static Skill, stacks: &[Stack]) -> Option<Entry> {
     // 同値なら先に出てくるスタックを採用するため max_by_key ではなく手動で比較
     let mut best: Option<(Stack, u8)> = None;
-    for (stack, _, level) in skill.skills {
-        if !stacks.contains(stack) {
+    for s in skill.stacks {
+        if !stacks.contains(&s.stack) {
             continue;
         }
-        if best.is_none_or(|(_, l)| *level > l) {
-            best = Some((*stack, *level));
+        if best.is_none_or(|(_, level)| s.level > level) {
+            best = Some((s.stack, s.level));
         }
     }
     best.map(|(stack, level)| Entry {
@@ -121,7 +103,7 @@ fn entry_for(skill: &'static Skill, stacks: &[Stack]) -> Option<Entry> {
 }
 
 fn stack_rank(stack: Stack) -> usize {
-    ALL_STACKS
+    Stack::ALL
         .iter()
         .position(|s| *s == stack)
         .unwrap_or(usize::MAX)
@@ -163,7 +145,6 @@ pub fn build_rows(skills: &'static [Skill], config: &SortConfig) -> Vec<Row> {
                 .collect();
             entries.sort_by(|a, b| compare(a, b, config.key, config.order));
             Row {
-                heading: heading(stacks),
                 stacks: stacks.clone(),
                 entries,
             }
@@ -185,8 +166,11 @@ mod tests {
         let cfg = SortConfig::from_mode(Mode::Default, &[], SortKey::Name, SortOrder::Asc);
         let rows = build_rows(SKILLS, &cfg);
         assert_eq!(rows.len(), 2);
-        assert_eq!(rows[0].heading, "Frontend / Backend / Application");
-        assert_eq!(rows[1].heading, "Infrastructure");
+        assert_eq!(
+            rows[0].stacks,
+            [Stack::Frontend, Stack::Backend, Stack::Application]
+        );
+        assert_eq!(rows[1].stacks, [Stack::Infrastructure]);
         // FE→BE→APP の順にまとめ、各スタック内は習熟度の降順。Rust は fe 40 / ap 30 で FE 扱い
         assert_eq!(
             names(&rows[0]),
@@ -204,8 +188,8 @@ mod tests {
             SortOrder::Desc,
         );
         let rows = build_rows(SKILLS, &cfg);
-        assert_eq!(rows[0].heading, "Frontend");
-        assert_eq!(rows[1].heading, "Application");
+        assert_eq!(rows[0].stacks, [Stack::Frontend]);
+        assert_eq!(rows[1].stacks, [Stack::Application]);
         assert!(names(&rows[0]).contains(&"Rust"));
         assert!(names(&rows[1]).contains(&"Rust"));
         let rust_fe = rows[0].entries.iter().find(|e| e.skill.name == "Rust");
