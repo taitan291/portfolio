@@ -29,7 +29,7 @@ pub fn RootPage() -> impl IntoView {
                         >
                             "web server"
                         </button>
-                        " のトップです。探しているのはたぶんこちら:"
+                        " のトップです。探しているのはたぶん:"
                     </p>
                     <p class="mt-2">
                         <A href="https://taitan291.github.io/portfolio/index.php" attr:class="text-site-link underline underline-offset-4">
