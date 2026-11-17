@@ -1,13 +1,8 @@
+use crate::components::game::ShootingGallery;
 use leptos::prelude::*;
-use leptos_router::components::A;
 
+/// 404 ページ。存在しない URL では、射的ゲームを全画面で表示する。
 #[component]
 pub fn NotFoundPage() -> impl IntoView {
-    view! {
-        <div class="min-h-[50vh] flex flex-col items-center justify-center gap-5 p-6 text-center">
-            <h1 class="text-3xl font-bold">"404 — ページが見つかりません"</h1>
-            <p>"URLを確認するか、トップページへお戻りください。"</p>
-            <A href="https://taitan291.github.io/portfolio/index.php" attr:class="text-site-accent underline">"トップページへ戻る"</A>
-        </div>
-    }
+    view! { <ShootingGallery home_href="https://taitan291.github.io/portfolio/index.php" /> }
 }
