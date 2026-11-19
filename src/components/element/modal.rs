@@ -37,7 +37,7 @@ pub fn Modal(
             type="button"
             aria-haspopup="dialog"
             id=(!id.is_empty()).then_some(id)
-            class=format!("group card-interactive block h-full w-full min-w-0 scroll-mt-24 text-left {class}")
+            class=format!("group card-interactive block h-full w-full min-w-0 text-left {class}")
             on:click=move |_| {
                 if let Some(dialog) = dialog.get() {
                     let _ = dialog.show_modal();

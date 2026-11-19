@@ -36,20 +36,23 @@ pub fn Header() -> impl IntoView {
                     </span>
                     "taitan291"
                 </A>
-                <ul class="-mx-2 flex w-full flex-wrap pb-2 font-mono text-xs min-[560px]:mx-0 min-[560px]:w-auto min-[560px]:pb-0">
+                // Below 560px the links get their own row; the numbers are dropped on very
+                // narrow screens so all four links fit on that single row.
+                <ul class="-mx-2.5 flex w-full flex-wrap pb-2 font-mono text-xs min-[560px]:mx-0 min-[560px]:w-auto min-[560px]:pb-0">
                     {PAGE_LINKS.into_iter().enumerate().map(|(index, (label, id))| view! {
                         <li>
                             <A
                                 href=format!("/#{id}")
-                                attr:class="group inline-flex min-h-11 min-w-11 items-center gap-1.5 rounded-full px-3 text-muted transition-colors hover:text-fg"
+                                attr:class="group inline-flex min-h-11 min-w-11 items-center gap-1.5 rounded-full px-2.5 text-muted transition-colors hover:text-fg sm:px-3"
                             >
-                                <span class="text-accent-text">{format!("{:02}", index + 1)}</span>
-                                {label}
+                                <span class="hidden text-accent-text min-[400px]:inline">{format!("{:02}", index + 1)}</span>
+                                <span class="nav-label">{label}</span>
                             </A>
                         </li>
                     }).collect_view()}
                 </ul>
             </nav>
+            <div class="scroll-progress" aria-hidden="true" />
         </header>
     }
 }

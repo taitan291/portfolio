@@ -9,10 +9,10 @@ pub fn Footer() -> impl IntoView {
     view! {
         <footer
             id=CONTACT_ID
-            class="scroll-mt-20 border-t border-line bg-surface"
+            class="border-t border-line bg-surface"
             style="padding-bottom: env(safe-area-inset-bottom, 0px)"
         >
-            <div class="container-page py-20 sm:py-28">
+            <div data-reveal="" class="container-page py-20 sm:py-28">
                 <p class="font-mono text-sm text-accent-text">
                     "04"<span class="mx-2 text-muted">"/"</span>{CONTACT_ID}
                 </p>
@@ -23,13 +23,13 @@ pub fn Footer() -> impl IntoView {
                     "制作物のソースコードや日々の活動は GitHub で公開しています。気軽にのぞいてみてください。"
                 </p>
                 <div class="mt-8 flex flex-wrap gap-3">
-                    <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="btn-primary">
+                    <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="group btn-primary">
                         "GitHub"
-                        <span aria-hidden="true">"↗"</span>
+                        <span aria-hidden="true" class="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">"↗"</span>
                     </a>
-                    <a href="#main-content" class="btn-ghost">
+                    <a href="#main-content" class="group btn-ghost">
                         "ページトップへ"
-                        <span aria-hidden="true">"↑"</span>
+                        <span aria-hidden="true" class="transition-transform duration-300 group-hover:-translate-y-1">"↑"</span>
                     </a>
                 </div>
             </div>

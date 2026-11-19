@@ -15,9 +15,9 @@ pub fn Section(
 ) -> impl IntoView {
     let label = tag.clone();
     view! {
-        <section id=tag class="scroll-mt-20 py-20 sm:py-28">
+        <section id=tag class="py-20 sm:py-28">
             <div class="container-page">
-                <div class="mb-10 flex flex-col gap-4 sm:mb-14 md:flex-row md:items-end md:justify-between">
+                <div data-reveal="" class="mb-10 flex flex-col gap-4 sm:mb-14 md:flex-row md:items-end md:justify-between">
                     <div>
                         <p class="font-mono text-sm text-accent-text">
                             {number}<span class="mx-2 text-muted">"/"</span>{label}

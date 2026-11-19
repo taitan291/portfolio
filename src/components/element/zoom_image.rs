@@ -19,19 +19,19 @@ pub fn ZoomImage(#[prop(into)] src: String, #[prop(into)] alt: String) -> impl I
                 }
             }
         >
-            <img src=src.clone() alt=alt.clone() class="w-full rounded-xl border border-line object-contain transition hover:opacity-90" />
+            <img src=src.clone() alt=alt.clone() loading="lazy" decoding="async" class="w-full rounded-xl border border-line object-contain transition hover:opacity-90" />
         </button>
         <dialog
             node_ref=dialog
             aria-label=dialog_label
-            class="m-auto max-h-[95vh] max-w-[95vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm"
+            class="zoom-dialog m-auto max-w-[95vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm"
             on:click=move |_| {
                 if let Some(dialog) = dialog.get() {
                     dialog.close();
                 }
             }
         >
-            <img src=src alt=alt class="max-h-[95vh] max-w-[95vw] cursor-zoom-out rounded-xl object-contain" />
+            <img src=src alt=alt class="zoom-dialog-image max-w-[95vw] cursor-zoom-out rounded-xl object-contain" />
         </dialog>
     }
 }

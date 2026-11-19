@@ -29,9 +29,9 @@ pub fn SkillsCard(
                 view! {
                     <span class="flex items-start justify-between gap-3">
                         <span class="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-105">
-                            <img src=trigger_image.clone() alt="" class="h-9 w-9 object-contain" />
+                            <img src=trigger_image.clone() alt="" width="36" height="36" loading="lazy" decoding="async" class="h-9 w-9 object-contain" />
                         </span>
-                        <span class="font-mono text-xs text-muted transition-colors group-hover:text-fg" aria-hidden="true">"↗"</span>
+                        <span class="font-mono text-xs text-muted transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg" aria-hidden="true">"↗"</span>
                     </span>
                     <span class="mt-5 block break-words text-xl font-bold tracking-tight">{trigger_name.clone()}</span>
                     <span class="mt-1 flex flex-wrap items-center gap-x-2 font-mono text-xs">
@@ -40,14 +40,14 @@ pub fn SkillsCard(
                         <span class="text-muted">{proficiency.label()}</span>
                     </span>
                     <span class="mt-4 block h-1 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
-                        <span style:width=format!("{level}%") class=format!("block h-full rounded-full {}", stack.bar_class()) />
+                        <span style:width=format!("{level}%") class=format!("skill-bar block h-full rounded-full {}", stack.bar_class()) />
                     </span>
                 }
             }
         >
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
                 <div class="grid shrink-0 place-items-center self-center rounded-2xl bg-white p-5 ring-1 ring-black/5 sm:self-start">
-                    <img src=image_url alt="" class="h-20 w-20 object-contain sm:h-28 sm:w-28" />
+                    <img src=image_url alt="" width="112" height="112" loading="lazy" decoding="async" class="h-20 w-20 object-contain sm:h-28 sm:w-28" />
                 </div>
                 <div class="min-w-0 flex-1 space-y-5">
                     {skills.into_iter().map(|(stack, proficiency, level)| view! {
@@ -59,7 +59,7 @@ pub fn SkillsCard(
                                 <span class="font-mono text-xs text-muted">{proficiency.label()}" · "{level}"%"</span>
                             </div>
                             <div class="h-2 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
-                                <div style:width=format!("{level}%") class=format!("h-full rounded-full {}", stack.bar_class()) />
+                                <div style:width=format!("{level}%") class=format!("skill-bar h-full rounded-full {}", stack.bar_class()) />
                             </div>
                         </div>
                     }).collect_view()}

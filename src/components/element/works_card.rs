@@ -28,7 +28,9 @@ pub fn WorkCard(work: Work, index: usize) -> impl IntoView {
                     <img
                         src=header_image_url
                         alt=""
-                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                        class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 font-mono text-xs text-white backdrop-blur">
                         <span class=if is_public { "h-1.5 w-1.5 rounded-full bg-lime-300" } else { "h-1.5 w-1.5 rounded-full bg-neutral-400" } />
@@ -42,7 +44,7 @@ pub fn WorkCard(work: Work, index: usize) -> impl IntoView {
                             <span class="mt-1 block break-words text-2xl font-bold tracking-tight">{header_text}</span>
                         </span>
                         <span
-                            class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line transition-colors group-hover:border-accent group-hover:bg-accent group-hover:text-accent-on"
+                            class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line transition duration-300 group-hover:rotate-45 group-hover:border-accent group-hover:bg-accent group-hover:text-accent-on"
                             aria-hidden="true"
                         >
                             "↗"
