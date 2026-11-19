@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-/// ドロップダウンの1項目。`class` は文字色などの追加クラス。
+/// ドロップダウンの 1 項目。`class` は文字色などの追加クラス。
 #[derive(Clone)]
 pub struct SelectOption<T> {
     pub value: T,
@@ -43,17 +43,21 @@ where
     };
 
     view! {
-        <div class="relative inline-block text-sm">
+        <div class="relative inline-block font-mono text-xs">
             <button
                 type="button"
-                class="flex min-w-44 items-center justify-between gap-3 rounded-lg border border-site-border px-3 py-2 transition-colors hover:border-site-accent"
+                class="flex min-h-11 min-w-44 items-center justify-between gap-3 rounded-full border border-line bg-surface/60 px-4 backdrop-blur transition-colors hover:border-fg/40"
                 aria-haspopup="listbox"
                 aria-label=label.clone()
                 aria-expanded=move || open.get().to_string()
                 on:click=move |_| set_open.update(|o| *o = !*o)
             >
                 <span class=move || current().1>{move || current().0}</span>
-                <span aria-hidden="true" class="text-site-muted">"▾"</span>
+                <span
+                    aria-hidden="true"
+                    class="text-muted transition-transform duration-300"
+                    class=("rotate-180", move || open.get())
+                >"▾"</span>
             </button>
             <Show when=move || open.get()>
                 <button
@@ -66,7 +70,7 @@ where
                 <ul
                     role="listbox"
                     aria-label=label.clone()
-                    class="absolute left-0 z-20 mt-1 min-w-full overflow-hidden rounded-lg border border-site-border bg-site-page py-1 shadow-lg"
+                    class="absolute left-0 z-20 mt-2 min-w-full animate-fade-up overflow-hidden rounded-2xl border border-line bg-surface py-1 shadow-xl [animation-duration:0.25s] md:left-auto md:right-0"
                 >
                     {options.with_value(|opts| opts.iter().map(|o| {
                         let v = o.value;
@@ -76,14 +80,19 @@ where
                                 <button
                                     type="button"
                                     class=move || format!(
-                                        "block w-full px-3 py-2 text-left hover:bg-site-subtle {class} {}",
-                                        if value.get() == v { "font-semibold" } else { "" }
+                                        "flex min-h-11 w-full items-center gap-2 px-4 text-left transition-colors hover:bg-surface-2 {class} {}",
+                                        if value.get() == v { "font-medium" } else { "" }
                                     )
                                     on:click=move |_| {
                                         on_change.run(v);
                                         set_open.set(false);
                                     }
                                 >
+                                    <span
+                                        aria-hidden="true"
+                                        class="h-1.5 w-1.5 rounded-full bg-accent-text"
+                                        class=("invisible", move || value.get() != v)
+                                    />
                                     {text}
                                 </button>
                             </li>

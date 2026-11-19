@@ -1,49 +1,163 @@
 use leptos::prelude::*;
 
-use crate::components::cards::work_card::WorkCard;
-use crate::components::layout::page_layout::PageLayout;
+use crate::components::element::skills_view::SkillsView;
+use crate::components::element::works_card::WorkCard;
 use crate::components::layout::section::Section;
-use crate::components::layout::toc::Toc;
-use crate::components::skills_view::SkillsView;
-use crate::data::site::{ABOUT_ID, PAGE_LINKS, WORKS_ID};
+use crate::components::reveal::reveal_delay;
+use crate::data::site::{ABOUT_ID, GITHUB_URL, WORKS_ID};
+use crate::data::skills::SKILLS;
+use crate::data::types::Proficiency;
 use crate::data::works::WORKS;
+use crate::layouts::layout::Layout;
 
-/// 本編ページ（`/index.php`）。About / Skills / Works を表示する。
+/// 本編ページ（`/index.php`）。Hero / About / Skills / Works を表示する。
 #[component]
 pub fn IndexPage() -> impl IntoView {
     view! {
-        <PageLayout>
-            <div class="py-12 sm:py-16">
-                <div class="flex items-stretch gap-4">
-                    // <img src="assets/my_icon.avif" alt="taitanのアイコン" class="aspect-square self-stretch rounded-xl object-cover" />
-                    <div>
-                        <h1 class="text-4xl font-bold tracking-tight text-site-accent sm:text-5xl">"taitan"</h1>
-                        <p class="mt-4 text-site-muted">"高専2年 情報系所属"</p>
+        <Layout>
+            <Hero />
+            <Section number="01" title="About Me" tag=ABOUT_ID>
+                <About />
+            </Section>
+            <div class="border-y border-line bg-surface/50">
+                <SkillsView />
+            </div>
+            <Section number="03" title="Works" tag=WORKS_ID lead="授業の課題や個人で取り組んだ制作物です。">
+                <div class="grid gap-6 md:grid-cols-2">
+                    {WORKS.iter().enumerate().map(|(index, work)| view! {
+                        <div data-reveal="" style=reveal_delay(index % 2 * 2)>
+                            <WorkCard work=work index=index />
+                        </div>
+                    }).collect_view()}
+                </div>
+            </Section>
+        </Layout>
+    }
+}
+
+#[component]
+fn Hero() -> impl IntoView {
+    let learning = SKILLS
+        .iter()
+        .filter(|skill| {
+            skill
+                .stacks
+                .iter()
+                .any(|s| s.proficiency == Proficiency::Learning)
+        })
+        .map(|skill| skill.name)
+        .collect::<Vec<_>>()
+        .join(" / ");
+    let stats = [
+        (format!("{:02}", SKILLS.len()), "Skills"),
+        (format!("{:02}", WORKS.len()), "Works"),
+        ("2nd".to_string(), "Year at KOSEN"),
+    ];
+
+    view! {
+        <section class="relative isolate overflow-hidden">
+            <div class="hero-grid absolute inset-0 -z-10 animate-fade-in" aria-hidden="true" />
+            <div class="hero-glow absolute -right-24 -top-24 -z-10 h-[28rem] w-[28rem] animate-drift rounded-full" aria-hidden="true" />
+            <div class="container-page grid items-center gap-12 pb-20 pt-16 sm:pb-28 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
+                <div>
+                    <p class="inline-flex animate-fade-up items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1 font-mono text-xs text-muted backdrop-blur">
+                        <span class="relative flex h-2 w-2">
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                            <span class="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+                        </span>
+                        "Currently learning: "{learning}
+                    </p>
+                    <p class="mt-8 animate-fade-up font-mono text-sm text-accent-text [animation-delay:80ms]">
+                        "// Hello, I'm"
+                    </p>
+                    // 文字ごとに分けて順に表示する。aria-label で名前を 1 語として読ませる。
+                    <h1 aria-label="taitan" class="mt-2 text-7xl font-bold leading-none tracking-tighter sm:text-8xl lg:text-9xl">
+                        {"taitan".chars().enumerate().map(|(index, letter)| view! {
+                            <span
+                                aria-hidden="true"
+                                class="inline-block animate-letter-rise"
+                                style=format!("animation-delay: {}ms", 140 + index * 45)
+                            >
+                                {letter.to_string()}
+                            </span>
+                        }).collect_view()}
+                        <span aria-hidden="true" class="animate-blink text-accent-text">"_"</span>
+                    </h1>
+                    <p class="mt-8 max-w-2xl animate-fade-up text-lg text-muted [animation-delay:220ms] sm:text-xl">
+                        "高専2年・情報系の学生です。"<br/>
+                        <span class="text-fg">"Webフロントエンド"</span>"や"<span class="text-fg">"Rust"</span>"を中心に、作りながら学んでいます。"
+                    </p>
+                    <div class="mt-10 flex animate-fade-up flex-wrap gap-3 [animation-delay:300ms]">
+                        <a href=format!("#{WORKS_ID}") class="group btn-primary">
+                            "作品を見る"
+                            <span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1">"→"</span>
+                        </a>
+                        <a href=GITHUB_URL target="_blank" rel="noopener noreferrer" class="group btn-ghost">
+                            "GitHub"
+                            <span aria-hidden="true" class="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">"↗"</span>
+                        </a>
+                    </div>
+                    <dl class="mt-14 grid max-w-lg animate-fade-up grid-cols-3 divide-x divide-line border-y border-line [animation-delay:380ms]">
+                        {stats.into_iter().map(|(value, label)| view! {
+                            <div class="px-4 py-4 first:pl-0">
+                                <dt class="font-mono text-[0.7rem] uppercase tracking-wider text-muted">{label}</dt>
+                                <dd class="mt-1 text-3xl font-bold tracking-tight">{value}</dd>
+                            </div>
+                        }).collect_view()}
+                    </dl>
+                </div>
+                <div class="mx-auto hidden w-64 animate-fade-up [animation-delay:200ms] sm:block lg:w-80">
+                    <div class="relative animate-float">
+                        <div class="absolute -inset-3 rotate-6 animate-sway rounded-[2rem] border border-dashed border-accent-text/50" aria-hidden="true" />
+                        <img
+                            src="assets/my_icon.avif"
+                            alt="taitanのアイコン"
+                            width="320"
+                            height="320"
+                            decoding="async"
+                            class="relative aspect-square w-full rounded-[2rem] border border-line object-cover shadow-2xl"
+                        />
+                        <span class="absolute -bottom-4 -left-4 rounded-full bg-accent px-4 py-2 font-mono text-xs font-medium text-accent-on shadow-lg">
+                            "@taitan291"
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10 xl:gap-16">
-                <div class="lg:sticky lg:top-6 lg:self-start">
-                    <Section title="Table of contents" id="contents">
-                        <nav aria-label="目次" class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                            {PAGE_LINKS.into_iter().map(|(label, id)| view! {
-                                <Toc title=label href=format!("#{id}") />
-                            }).collect_view()}
-                        </nav>
-                    </Section>
-                </div>
-                <div class="min-w-0">
-                    <Section title="About Me" id=ABOUT_ID>
-                        <p>"高専2年 情報系所属のtaitanです。"<br/>"現在はwebフロントエンドやRustなどの勉強中です。"</p>
-                    </Section>
-                    <SkillsView />
-                    <Section title="Works" id=WORKS_ID>
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            {WORKS.iter().map(|work| view! { <WorkCard work=work /> }).collect_view()}
-                        </div>
-                    </Section>
-                </div>
+        </section>
+    }
+}
+
+#[component]
+fn About() -> impl IntoView {
+    let profile = [
+        ("Name", "taitan"),
+        ("School", "高専 2年 / 情報系"),
+        ("Interests", "Web Frontend, Rust"),
+        ("GitHub", "@taitan291"),
+    ];
+
+    view! {
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
+            <div data-reveal="" class="space-y-6 text-lg leading-loose text-muted">
+                <p>
+                    "高専2年、情報系所属の"<span class="font-bold text-fg">"taitan"</span>"です。"
+                </p>
+                <p>
+                    "現在は"<span class="text-fg">"Webフロントエンド"</span>"や"<span class="text-fg">"Rust"</span>
+                    "などを勉強中です。このサイトも Rust（Leptos）と WebAssembly で作っています。"
+                </p>
             </div>
-        </PageLayout>
+            // フェードインの transition がカード自身の transition とぶつからないよう、外側で包む。
+            <div data-reveal="" style=reveal_delay(2)>
+                <dl class="card divide-y divide-line">
+                    {profile.into_iter().map(|(label, value)| view! {
+                        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-6 py-4">
+                            <dt class="font-mono text-xs uppercase tracking-wider text-muted">{label}</dt>
+                            <dd class="font-medium">{value}</dd>
+                        </div>
+                    }).collect_view()}
+                </dl>
+            </div>
+        </div>
     }
 }

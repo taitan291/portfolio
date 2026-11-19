@@ -1,5 +1,4 @@
-pub mod cards;
+pub mod element;
 pub mod game;
 pub mod layout;
-pub mod skills_view;
-pub mod ui;
+pub mod reveal;

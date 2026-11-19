@@ -1,5 +1,4 @@
-use leptos::html::Dialog;
-use leptos::prelude::*;
+use leptos::{html::Dialog, prelude::*};
 
 /// クリックするとネイティブの `<dialog>` で拡大表示するサムネイル。
 #[component]
@@ -26,19 +25,19 @@ pub fn ZoomImage(
                 }
             }
         >
-            <img src=src.clone() alt=alt.clone() class="h-full w-full rounded-lg object-contain" />
+            <img src=src.clone() alt=alt.clone() loading="lazy" decoding="async" class="h-full w-full object-contain transition hover:opacity-90" />
         </button>
         <dialog
             node_ref=dialog
             aria-label=dialog_label
-            class="zoom-dialog m-auto overflow-visible bg-transparent p-0 backdrop:bg-black/70"
+            class="zoom-dialog m-auto max-w-[95vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm"
             on:click=move |_| {
                 if let Some(dialog) = dialog.get() {
                     dialog.close();
                 }
             }
         >
-            <img src=src alt=alt class="zoom-dialog-image cursor-zoom-out rounded-lg object-contain" />
+            <img src=src alt=alt class="zoom-dialog-image max-w-[95vw] cursor-zoom-out rounded-xl object-contain" />
         </dialog>
     }
 }

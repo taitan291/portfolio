@@ -1,11 +1,11 @@
 use leptos::html::Div;
 use leptos::prelude::*;
 
-use crate::components::ui::zoom_image::ZoomImage;
+use super::zoom_image::ZoomImage;
 use crate::data::types::Image;
 
-/// 前後のボタンにのせるクラス（位置の `left-2` / `right-2` は個別に付ける）。
-const NAV_BUTTON: &str = "absolute top-1/2 z-10 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-xl text-white transition-colors hover:bg-black/70";
+/// 前後のボタンにのせるクラス（位置の `left-3` / `right-3` は個別に付ける）。
+const NAV_BUTTON: &str = "absolute top-1/2 z-10 grid min-h-11 min-w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/50 text-xl text-white backdrop-blur transition-colors hover:bg-black/70";
 
 /// スワイプできるスライドショー（CSS scroll-snap）。前後ボタン・ドット・矢印キーで切り替える。
 /// スライドをクリックすると [`ZoomImage`] で拡大表示する。
@@ -28,13 +28,13 @@ pub fn Slideshow(images: &'static [Image]) -> impl IntoView {
         <section
             aria-roledescription="carousel"
             aria-label="画像スライドショー"
-            class="mt-4"
+            class="mt-8"
         >
             <div class="relative">
                 <div
                     node_ref=track
                     tabindex="0"
-                    class="slideshow-track flex aspect-video snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-lg bg-site-subtle"
+                    class="slideshow-track flex aspect-video snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-xl border border-line bg-surface-2"
                     on:scroll=move |_| {
                         if let Some(track) = track.get() {
                             let width = track.client_width();
@@ -65,31 +65,33 @@ pub fn Slideshow(images: &'static [Image]) -> impl IntoView {
                     <button
                         type="button"
                         aria-label="前の画像"
-                        class=format!("{NAV_BUTTON} left-2")
+                        class=format!("{NAV_BUTTON} left-3")
                         on:click=move |_| prev()
                     >"‹"</button>
                     <button
                         type="button"
                         aria-label="次の画像"
-                        class=format!("{NAV_BUTTON} right-2")
+                        class=format!("{NAV_BUTTON} right-3")
                         on:click=move |_| next()
                     >"›"</button>
                 })}
             </div>
             {(count > 1).then(|| view! {
-                <div class="mt-2 flex items-center justify-center gap-1">
+                <div class="mt-3 flex items-center justify-center gap-1">
                     {(0..count).map(|i| view! {
                         <button
                             type="button"
                             aria-label=format!("{}枚目を表示", i + 1)
                             aria-current=move || (current.get() == i).then_some("true")
-                            class="group flex min-h-6 min-w-6 items-center justify-center"
+                            class="flex min-h-6 min-w-6 items-center justify-center"
                             on:click=move |_| go_to(i)
                         >
                             <span
-                                class="block h-2 w-2 rounded-full transition-colors"
-                                class=("bg-site-accent", move || current.get() == i)
-                                class=("bg-site-border-strong/50", move || current.get() != i)
+                                class="block h-1.5 rounded-full transition-all duration-300"
+                                class=("w-5", move || current.get() == i)
+                                class=("bg-accent-text", move || current.get() == i)
+                                class=("w-1.5", move || current.get() != i)
+                                class=("bg-line", move || current.get() != i)
                             ></span>
                         </button>
                     }).collect_view()}

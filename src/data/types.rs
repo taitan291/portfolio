@@ -46,6 +46,46 @@ impl Stack {
         Stack::Application,
         Stack::Infrastructure,
     ];
+
+    /// 淡い背景色のクラス。
+    pub fn bg_class(&self) -> &'static str {
+        match self {
+            Stack::Frontend => "bg-stack-frontend/10",
+            Stack::Backend => "bg-stack-backend/10",
+            Stack::Application => "bg-stack-app/10",
+            Stack::Infrastructure => "bg-stack-infra/10",
+        }
+    }
+
+    /// 文字色のクラス。
+    pub fn text_class(&self) -> &'static str {
+        match self {
+            Stack::Frontend => "text-stack-frontend",
+            Stack::Backend => "text-stack-backend",
+            Stack::Application => "text-stack-app",
+            Stack::Infrastructure => "text-stack-infra",
+        }
+    }
+
+    /// 習熟度バーの色のクラス。
+    pub fn bar_class(&self) -> &'static str {
+        match self {
+            Stack::Frontend => "bg-stack-frontend",
+            Stack::Backend => "bg-stack-backend",
+            Stack::Application => "bg-stack-app",
+            Stack::Infrastructure => "bg-stack-infra",
+        }
+    }
+
+    /// 枠線の色のクラス。
+    pub fn border_class(&self) -> &'static str {
+        match self {
+            Stack::Frontend => "border-stack-frontend/30",
+            Stack::Backend => "border-stack-backend/30",
+            Stack::Application => "border-stack-app/30",
+            Stack::Infrastructure => "border-stack-infra/30",
+        }
+    }
 }
 
 impl Label for Stack {

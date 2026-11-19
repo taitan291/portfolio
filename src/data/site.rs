@@ -1,13 +1,15 @@
-/// ページ内セクションの ID。ヘッダー・目次・各 `Section` で共有する。
+/// ページ内セクションの ID。ヘッダーと各 `Section` で共有する。
 pub const ABOUT_ID: &str = "about";
 pub const SKILLS_ID: &str = "skills";
 pub const WORKS_ID: &str = "works";
+pub const CONTACT_ID: &str = "contact";
 
-/// ヘッダーと目次に並べるリンク `(表示名, セクションID)`。
-pub const PAGE_LINKS: [(&str, &str); 3] = [
+/// ヘッダーに並べるリンク `(表示名, セクションID)`。
+pub const PAGE_LINKS: [(&str, &str); 4] = [
     ("About", ABOUT_ID),
     ("Skills", SKILLS_ID),
     ("Works", WORKS_ID),
+    ("Contact", CONTACT_ID),
 ];
 
 /// 本編ページのルーター内パス（`Router base` からの相対）。

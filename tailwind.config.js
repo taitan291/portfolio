@@ -1,29 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
-// 技術スタック別の配色。キーは `data::types::Stack` のバリアント名に対応する。
-//   surface: 背景 / fg: 文字 / border: 枠線
-// 熟練度バーの色は熟練度に応じて Rust 側 (components/cards/stack_style.rs) で OKLCH から生成する。
-const stackColors = {
-  frontend: { surface: "#EEF6FE", fg: "#255079", border: "#C4DAF2" },
-  backend: { surface: "#EBF8F8", fg: "#005959", border: "#BAE0E0" },
-  infrastructure: { surface: "#FDF3EC", fg: "#703F19", border: "#EDD1BF" },
-  application: { surface: "#FEF1F4", fg: "#733747", border: "#F0CDD4" },
-};
-
-// サイト全体のニュートラル配色 (bg-site-page, text-site-muted, ...)。
-const siteColors = {
-  page: "#FFFFFF", // ページ背景
-  surface: "#FFFFFF", // ヘッダー・カード・ダイアログなどの面
-  subtle: "#FAFAFA", // ホバー・コード・バー背景などの淡い面
-  text: "#262626", // 本文
-  subtext: "#525252", // ナビゲーションなどの副次テキスト
-  muted: "#737373", // 補足テキスト
-  accent: "#171717", // 見出し・リンク強調
-  link: "#2563EB", // 外部リンク
-  border: "#E5E5E5", // 区切り線・枠線
-  "border-strong": "#A3A3A3", // ホバー時の枠線
-  focus: "#525252", // フォーカスリング
-};
+// 色は style.css で定義した CSS 変数（RGB の 3 値）を参照し、ライト/ダークで自動的に切り替わる。
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 // 404 射的ゲームの DOM オーバーレイの配色 (bg-game-black, text-game-yellow, ...)。
 // Canvas 側のパレット (components/game/platform/palette.rs) と同じ値にそろえる。
@@ -40,12 +18,85 @@ const gameColors = {
 
 module.exports = {
   content: ["*.html", "./src/**/*.rs"],
+  future: {
+    // `hover:` は本当にホバーできる端末でだけ効かせ、タップ後にホバー状態が残らないようにする。
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
-        site: siteColors,
-        stack: stackColors,
+        base: token("bg"),
+        surface: {
+          DEFAULT: token("surface"),
+          2: token("surface-2"),
+        },
+        line: token("line"),
+        fg: token("fg"),
+        muted: token("muted"),
+        accent: {
+          DEFAULT: token("accent"),
+          text: token("accent-text"),
+          on: token("on-accent"),
+        },
+        stack: {
+          frontend: token("stack-frontend"),
+          backend: token("stack-backend"),
+          app: token("stack-app"),
+          infra: token("stack-infra"),
+        },
         game: gameColors,
+      },
+      fontFamily: {
+        sans: [
+          '"Space Grotesk"',
+          '"Hiragino Kaku Gothic ProN"',
+          '"Hiragino Sans"',
+          '"Noto Sans JP"',
+          '"Yu Gothic"',
+          "Meiryo",
+          "sans-serif",
+        ],
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
+      keyframes: {
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(16px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "letter-rise": {
+          from: { opacity: "0", transform: "translateY(0.45em) rotate(8deg)" },
+          to: { opacity: "1", transform: "none" },
+        },
+        blink: {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
+        // ループするアニメーションは静止状態で始まり終わるので、動きを減らす設定では止まって見える。
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        sway: {
+          "0%, 100%": { transform: "rotate(6deg)" },
+          "50%": { transform: "rotate(9deg)" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "50%": { transform: "translate(-48px, 32px) scale(1.12)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        "fade-in": "fade-in 1.2s ease-out both",
+        "letter-rise": "letter-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        blink: "blink 1.1s step-end infinite",
+        float: "float 6s ease-in-out infinite",
+        sway: "sway 8s ease-in-out infinite",
+        drift: "drift 16s ease-in-out infinite",
       },
     },
   },

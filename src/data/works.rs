@@ -3,6 +3,8 @@ use crate::data::types::{Image, Lang, Link};
 /// 作品一覧の 1 項目。
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Work {
+    /// ページ内アンカーの ID。`content/` 内の作品ディレクトリ名と同じにする。
+    pub id: &'static str,
     pub header_image_url: &'static str,
     pub header_text: &'static str,
     /// モーダル内のスライドショーに表示する画像。
@@ -17,6 +19,7 @@ pub struct Work {
 
 pub const WORKS: &[Work] = &[
     Work {
+        id: "programming-1_4",
         header_image_url: "content/programming-1_4/screenshot-2.png",
         header_text: "colab課題4",
         images: &[
@@ -46,6 +49,7 @@ pub const WORKS: &[Work] = &[
         }],
     },
     Work {
+        id: "fes-2026",
         header_image_url: "content/fes-2026/screenshot-1.jpg",
         header_text: "26年度高専祭展示",
         images: &[

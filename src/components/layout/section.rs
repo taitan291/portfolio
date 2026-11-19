@@ -1,25 +1,44 @@
 use leptos::prelude::*;
 
-/// 見出し付きのページ内セクション。`id` はヘッダー・目次のリンク先になる。
+/// 番号付きのラベル（例: `01 / about`）と大きな見出しを持つページ内セクション。
+/// `tag` はヘッダーのリンク先になる ID。
 #[component]
 pub fn Section(
     #[prop(into)] title: String,
-    #[prop(into)] id: String,
-    /// タイトルの横に置く要素(ドロップダウンなど)
+    #[prop(into)] tag: String,
+    /// ラベルに表示する 2 桁の番号。
+    #[prop(into)]
+    number: String,
+    /// 見出しの横に表示する短い説明。
+    #[prop(optional, into)]
+    lead: String,
+    /// 見出しの横に置く要素（ドロップダウンなど）。
     #[prop(optional, into)]
     actions: Option<ViewFn>,
     children: Children,
 ) -> impl IntoView {
+    let label = tag.clone();
     view! {
-        <section
-            id=id
-            class="border-t border-site-border pt-5 pb-8 text-site-text sm:pt-6 sm:pb-10 scroll-mt-6"
-        >
-            <div class="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <h2 class="text-xl font-semibold tracking-tight text-site-accent">{title}</h2>
-                {actions.map(|a| a.run())}
+        <section id=tag class="py-20 sm:py-28">
+            <div class="container-page">
+                <div data-reveal="" class="mb-10 flex flex-col gap-4 sm:mb-14 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p class="font-mono text-sm text-accent-text">
+                            {number}<span class="mx-2 text-muted">"/"</span>{label}
+                        </p>
+                        <h2 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">{title}</h2>
+                    </div>
+                    {(!lead.is_empty() || actions.is_some()).then(|| view! {
+                        <div class="flex flex-col gap-4 md:items-end">
+                            {(!lead.is_empty()).then(|| view! {
+                                <p class="max-w-sm text-sm text-muted md:text-right">{lead}</p>
+                            })}
+                            {actions.map(|actions| actions.run())}
+                        </div>
+                    })}
+                </div>
+                {children()}
             </div>
-            <div>{children()}</div>
         </section>
     }
 }
