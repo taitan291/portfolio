@@ -66,7 +66,7 @@ src/
 ├── pages/               index（トップ）・not_found（404）
 ├── layouts/             共通レイアウト
 ├── components/
-│   ├── element/         ヘッダー、目次、スキル/作品カード、モーダルなど
+│   ├── element/         ヘッダー、フッター（Contact）、スキル/作品カード、モーダルなど
 │   └── layout/          Section
 ├── data/
 │   ├── skills.rs        スキル一覧（SKILLS）
@@ -85,7 +85,7 @@ src/
 | スキル | `src/data/skills.rs` の `SKILLS` |
 | 作品 | `src/data/works.rs` の `WORKS` |
 | ナビゲーション | `src/components/element/header.rs` の `PAGE_LINKS` |
-| 色 | `tailwind.config.js` |
+| 色（ライト/ダーク） | `style.css` の `:root` の CSS 変数（`tailwind.config.js` から参照） |
 | 画像・アイコン | `src/assets/` |
 
 ### 作品を追加する
@@ -111,15 +111,16 @@ src/
 ## 表示の仕様
 
 - スキル・作品の詳細表示にはHTMLの `<dialog>` と `showModal()` を使います。
-- スキルカードは画面幅に応じて1〜3列（640〜1023pxでは3列）で、1024px以上では列数が本文の幅に応じて増えます。
-- 1024px以上ではページの最大幅制限を外し、目次を左・本文を右に配置します。
+- スキルカードは幅9.5rem以上を目安に自動で列数が決まり（スマホでは2列）、1024px以上では4列です。
+- 本文は最大幅72rem（`max-w-6xl`）で中央に配置し、ヘッダーは画面上部に固定されます。
+- 配色はOSのライト/ダーク設定に追従します。アニメーションは `prefers-reduced-motion` で無効になります。
 - フッターは少なくとも画面下端に配置されます。
 - ノッチなどのセーフエリアを余白に反映し、詳細ダイアログは動的な画面の高さに収めて内部をスクロールできます。
 - ナビゲーションと閉じるボタンの高さは44px以上です。
 
 ## 表示確認のチェックリスト
 
-- ヘッダー・目次の About / Skills / Works から対象セクションへ移動できる。
+- ヘッダーの About / Skills / Works / Contact から対象セクションへ移動できる。
 - スキルカードをTabで選択し、Enter / Spaceで開ける。
 - 詳細表示中はTabの移動がダイアログ内に留まり、Escape・閉じるボタン・背景クリックで閉じられる。
 - 閉じた後は元のカードにフォーカスが戻る。

@@ -23,6 +23,9 @@ pub fn Modal(
     /// Full URL shown under the title in the header; the scheme is stripped when displayed.
     #[prop(optional)]
     url: &'static str,
+    /// Extra classes for the trigger button (layout and look of the card).
+    #[prop(optional, into)]
+    class: String,
     children: Children,
 ) -> impl IntoView {
     let dialog = NodeRef::<Dialog>::new();
@@ -34,7 +37,7 @@ pub fn Modal(
             type="button"
             aria-haspopup="dialog"
             id=(!id.is_empty()).then_some(id)
-            class="scroll-mt-6 min-w-0 w-full rounded-xl border border-cyber-border bg-white p-4 sm:p-5 text-center transition-colors hover:border-neutral-400 hover:bg-cyber-container"
+            class=format!("group card-interactive block h-full w-full min-w-0 scroll-mt-24 text-left {class}")
             on:click=move |_| {
                 if let Some(dialog) = dialog.get() {
                     let _ = dialog.show_modal();
@@ -46,7 +49,7 @@ pub fn Modal(
         <dialog
             node_ref=dialog
             aria-label=accessible_title
-            class="responsive-dialog max-w-3xl overflow-y-auto rounded-2xl bg-white p-0 text-cyber-text shadow-xl backdrop:bg-black/20 backdrop:backdrop-blur-sm"
+            class="responsive-dialog max-w-3xl overflow-y-auto rounded-3xl border border-line bg-surface p-0 text-fg shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm"
             on:click=move |event| {
                 if let Some(dialog) = dialog.get() {
                     let bounds = dialog.get_bounding_client_rect();
@@ -61,9 +64,9 @@ pub fn Modal(
                 }
             }
         >
-            <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-cyber-border bg-white p-4">
+            <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-surface/90 px-5 py-4 backdrop-blur sm:px-7">
                 <div class="min-w-0">
-                    <h2 class="break-words text-2xl font-bold text-cyber-accent">{title}</h2>
+                    <h2 class="break-words text-2xl font-bold tracking-tight">{title}</h2>
                     {(!url.is_empty()).then(|| {
                         let display = url
                             .strip_prefix("https://")
@@ -74,9 +77,10 @@ pub fn Modal(
                                 href=url
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="mt-1 block break-all text-sm text-blue-600 underline"
+                                class="mt-1 inline-flex max-w-full items-center gap-1 break-all font-mono text-xs text-accent-text underline-offset-4 hover:underline"
                             >
                                 {display}
+                                <span aria-hidden="true">"↗"</span>
                             </a>
                         }
                     })}
@@ -85,7 +89,7 @@ pub fn Modal(
                     type="button"
                     autofocus
                     aria-label="閉じる"
-                    class="min-h-11 min-w-11 shrink-0 rounded px-3 py-2 text-xl transition-colors hover:bg-cyber-container"
+                    class="grid min-h-11 min-w-11 shrink-0 place-items-center rounded-full border border-line text-lg text-muted transition-colors hover:border-fg/40 hover:text-fg"
                     on:click=move |_| {
                         if let Some(dialog) = dialog.get() {
                             dialog.close();
@@ -93,7 +97,7 @@ pub fn Modal(
                     }
                 >"✕"</button>
             </div>
-            <div class="p-4 sm:p-5">{children()}</div>
+            <div class="p-5 sm:p-7">{children()}</div>
         </dialog>
     }
 }

@@ -5,9 +5,9 @@ use leptos::prelude::*;
 #[component]
 pub fn Layout(children: Children) -> impl IntoView {
     view! {
-        <div class="page-shell mx-auto w-full max-w-4xl bg-cyber-layout lg:flex lg:min-h-dvh lg:max-w-none lg:flex-col">
+        <div class="flex min-h-dvh flex-col">
             <Header />
-            <main id="main-content" tabindex="-1" class="lg:flex-1">
+            <main id="main-content" tabindex="-1" class="flex-1 scroll-mt-20 focus:outline-none">
                 {children()}
             </main>
             <Footer />
